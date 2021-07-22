@@ -224,7 +224,7 @@ namespace Binary.UI
             splitContainer2.Panel2.Controls.Add(TexEditorPropertyGrid);
             splitContainer2.Panel2MinSize = 200;
             splitContainer2.Size = new System.Drawing.Size(532, 1096);
-            splitContainer2.SplitterDistance = 692;
+            splitContainer2.SplitterDistance = 799;
             splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 0;
             // 
@@ -240,7 +240,7 @@ namespace Binary.UI
             TexEditorListView.MultiSelect = false;
             TexEditorListView.Name = "TexEditorListView";
             TexEditorListView.OwnerDraw = true;
-            TexEditorListView.Size = new System.Drawing.Size(514, 694);
+            TexEditorListView.Size = new System.Drawing.Size(514, 801);
             TexEditorListView.TabIndex = 0;
             TexEditorListView.UseCompatibleStateImageBehavior = false;
             TexEditorListView.View = System.Windows.Forms.View.Details;
@@ -277,10 +277,10 @@ namespace Binary.UI
             // 
             TexEditorPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             TexEditorPropertyGrid.HelpVisible = false;
-            TexEditorPropertyGrid.Location = new System.Drawing.Point(14, 84);
+            TexEditorPropertyGrid.Location = new System.Drawing.Point(14, 6);
             TexEditorPropertyGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TexEditorPropertyGrid.Name = "TexEditorPropertyGrid";
-            TexEditorPropertyGrid.Size = new System.Drawing.Size(512, 282);
+            TexEditorPropertyGrid.Size = new System.Drawing.Size(512, 256);
             TexEditorPropertyGrid.TabIndex = 0;
             TexEditorPropertyGrid.PropertyValueChanged += TexEditorPropertyGrid_PropertyValueChanged;
             // 
@@ -291,7 +291,7 @@ namespace Binary.UI
             panel1.Controls.Add(TexEditorImage);
             panel1.Location = new System.Drawing.Point(6, 3);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(897, 1063);
+            panel1.Size = new System.Drawing.Size(895, 1063);
             panel1.TabIndex = 1;
             // 
             // TexEditorImage
@@ -317,12 +317,12 @@ namespace Binary.UI
             // 
             // TexEditorSearchBox
             // 
-            TexEditorSearchBox.Name = "TexEditorSearchBox";
+            TexEditorSearchBox.BackColor = System.Drawing.Color.LightBlue;
             TexEditorSearchBox.Location = new System.Drawing.Point(366, 777);
+            TexEditorSearchBox.Name = "TexEditorSearchBox";
             TexEditorSearchBox.Size = new System.Drawing.Size(166, 23);
             TexEditorSearchBox.TabIndex = 3;
             TexEditorSearchBox.Visible = false;
-            TexEditorSearchBox.BackColor = System.Drawing.Color.LightBlue;
             TexEditorSearchBox.TextChanged += TexEditorSearchBox_TextChanged;
             // 
             // TextureEditor

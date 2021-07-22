@@ -1,75 +1,133 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>binary.ico</ApplicationIcon>
-    <Version>2.9.1</Version>
-    <Authors>MaxHwoy</Authors>
-    <PublisherName>MaxHwoy</PublisherName>
-    <Description>Tool for editing Need for Speed binary files (.BIN, .BUN, .LZC).</Description>
-    <Copyright>Copyright © 2021 MaxHwoy</Copyright>
-    <AssemblyVersion>2.9.1.0</AssemblyVersion>
-    <FileVersion>2.9.1.0</FileVersion>
-    <Platforms>AnyCPU;x64</Platforms>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>default</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+        <ApplicationIcon>binary.ico</ApplicationIcon>
+        <Version>2.9.1</Version>
+        <Authors>MaxHwoy</Authors>
+        <PublisherName>MaxHwoy</PublisherName>
+        <Description>Tool for editing Need for Speed binary files (.BIN, .BUN, .LZC).</Description>
+        <Copyright>Copyright © 2024 MaxHwoy</Copyright>
+        <AssemblyVersion>2.9.1.0</AssemblyVersion>
+        <FileVersion>2.9.1.0</FileVersion>
+        <Platforms>AnyCPU;x64</Platforms>
+        <PlatformTarget>x86</PlatformTarget>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <PlatformTarget>x64</PlatformTarget>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <PlatformTarget>x64</PlatformTarget>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Modules\CoreExtensions\CoreExtensions\CoreExtensions.csproj" />
-    <ProjectReference Include="..\Modules\Endscript\Endscript\Endscript.csproj" />
-    <ProjectReference Include="..\Modules\ILWrapper\ILWrapper\ILWrapper.csproj" />
-    <ProjectReference Include="..\Modules\Nikki\Nikki\Nikki.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Modules\CoreExtensions\CoreExtensions\CoreExtensions.csproj"/>
+        <ProjectReference Include="..\Modules\Endscript\Endscript\Endscript.csproj"/>
+        <ProjectReference Include="..\Modules\ILWrapper\ILWrapper\ILWrapper.csproj"/>
+        <ProjectReference Include="..\Modules\Nikki\Nikki\Nikki.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Prompt\Combo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Properties\Configurations.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Configurations.settings</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Prompt\Combo.cs">
+            <SubType>Form</SubType>
+        </Compile>
+        <Compile Update="Properties\Configurations.Designer.cs">
+            <DesignTimeSharedInput>True</DesignTimeSharedInput>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Configurations.settings</DependentUpon>
+        </Compile>
+        <Compile Update="Properties\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Properties\Configurations.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Configurations.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="Properties\Configurations.settings">
+            <Generator>SettingsSingleFileGenerator</Generator>
+            <LastGenOutput>Configurations.Designer.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="mainkeys\carbon.txt"/>
+        <None Remove="mainkeys\mostwanted.txt"/>
+        <None Remove="mainkeys\prostreet.txt"/>
+        <None Remove="mainkeys\undercover.txt"/>
+        <None Remove="mainkeys\underground1.txt"/>
+        <None Remove="mainkeys\underground2.txt"/>
+        <None Remove="Readme.txt"/>
+        <None Remove="userkeys\carbon.txt"/>
+        <None Remove="userkeys\mostwanted.txt"/>
+        <None Remove="userkeys\prostreet.txt"/>
+        <None Remove="userkeys\undercover.txt"/>
+        <None Remove="userkeys\underground1.txt"/>
+        <None Remove="userkeys\underground2.txt"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="mainkeys\carbon.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="mainkeys\mostwanted.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="mainkeys\prostreet.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="mainkeys\undercover.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="mainkeys\underground1.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="mainkeys\underground2.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Readme.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="userkeys\carbon.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="userkeys\mostwanted.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="userkeys\prostreet.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="userkeys\undercover.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="userkeys\underground1.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="userkeys\underground2.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
 </Project>
