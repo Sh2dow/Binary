@@ -309,7 +309,7 @@ namespace Binary
 
         private void ManageButtonExportNode(TreeNode node)
         {
-            if (node == null || node.Level != 2)
+            if (node == null || node.Level < 1)
             {
 
                 this.EditorButtonExportNode.Enabled = false;
@@ -317,7 +317,7 @@ namespace Binary
 
             }
 
-            var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Parent.Text);
+            var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Parent?.Text || _.Filename == node.Parent?.Text);
 
             if (sdb == null)
             {
@@ -1215,73 +1215,49 @@ namespace Binary
         static string m_exportNodeLastDir = null;
         private void EditorButtonExportNode_Click(object sender, EventArgs e)
         {
-            // This button is enabled only in collections, so it is 
-            // safe to assume that we are in a collection TreeNode
-
-            string fname = this.EditorTreeView.SelectedNode.Parent.Parent.Text;
-            string mname = this.EditorTreeView.SelectedNode.Parent.Text;
-            string cname = this.EditorTreeView.SelectedNode.Text;
-
-            var sdb = this.Profile.Find(_ => _.Filename == fname);
-            var manager = sdb.Database.GetManager(mname);
-
-            using var exporter = new Exporter(manager.AllowsNoSerialization)
+            if (this.EditorTreeView.SelectedNodes.Count == 0)
             {
-                StartPosition = FormStartPosition.CenterScreen
+                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using var dialog = new SaveFileDialog()
+            {
+                AddExtension = true,
+                AutoUpgradeEnabled = true,
+                CheckPathExists = true,
+                DefaultExt = ".BIN",
+                Filter = "Binary Files|*.BIN|Any Files|*.*",
+                FileName = this.EditorTreeView.SelectedNode?.Parent?.Text ?? this.EditorTreeView.SelectedNode?.Text ?? "MultipleExport",
+                OverwritePrompt = true,
+                SupportMultiDottedExtensions = true,
+                Title = "Select filename where collections should be exported",
             };
 
-            if (true) // Skip the serialization dialog.
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-
-                using var dialog = new SaveFileDialog()
+                foreach (TreeNode selectedNode in this.EditorTreeView.SelectedNodes)
                 {
-                    AddExtension = true,
-                    AutoUpgradeEnabled = true,
-                    CheckPathExists = true,
-                    DefaultExt = ".BIN",
-                    Filter = "Binary Files|*.BIN|Any Files|*.*",
-                    FileName = cname,
-                    OverwritePrompt = true,
-                    SupportMultiDottedExtensions = true,
-                    Title = "Select filename where collection should be exported",
-                };
+                    string fname = selectedNode.Parent.Parent.Text;
+                    string mname = selectedNode.Parent.Text;
+                    string cname = selectedNode.Text;
 
-                if (!String.IsNullOrEmpty(m_exportNodeLastDir))
-                {
-                    dialog.InitialDirectory = m_exportNodeLastDir;
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
+                    var manager = sdb.Database.GetManager(mname);
+
+                    try
+                    {
+                        using var bw = new BinaryWriter(File.Open(dialog.FileName, FileMode.Append));
+                        manager.Export(cname, bw, true); // Adjust to fit the export logic
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to export node: {cname}. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-
-                    m_exportNodeLastDir = Path.GetDirectoryName(dialog.FileName);
-
-#if !DEBUG
-					try
-					{
-#endif
-
-                    using var bw = new BinaryWriter(File.Open(dialog.FileName, FileMode.Create));
-                    manager.Export(cname, bw, exporter.Serialized);
-                    MessageBox.Show($"Collection {cname} has been exported to path {dialog.FileName}", "Info",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-#if !DEBUG
-					}
-					catch (Exception ex)
-					{
-
-						MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-						return;
-
-					}
-#endif
-
-                }
-
+                MessageBox.Show($"Selected nodes have been successfully exported to {dialog.FileName}.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
 
         static string m_importNodeLastDir = null;
         private void EditorButtonImportNode_Click(object sender, EventArgs e)

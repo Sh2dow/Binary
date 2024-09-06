@@ -1,3 +1,5 @@
+using Binary.UI;
+
 namespace Binary
 {
 	partial class Editor
@@ -76,7 +78,7 @@ namespace Binary
             this.splitContainer10 = new System.Windows.Forms.SplitContainer();
             this.EditorFindTextBox = new System.Windows.Forms.TextBox();
             this.EditorButtonScriptNode = new System.Windows.Forms.Button();
-            this.EditorTreeView = new System.Windows.Forms.TreeView();
+            this.EditorTreeView = new MultiSelectTreeView();
             this.EditorImageList = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.EditorPropertyGrid = new System.Windows.Forms.PropertyGrid();
@@ -890,7 +892,7 @@ namespace Binary
 		private System.Windows.Forms.Button EditorButtonScriptNode;
 		private System.Windows.Forms.SplitContainer splitContainer3;
 		private System.Windows.Forms.TextBox EditorFindTextBox;
-		private System.Windows.Forms.TreeView EditorTreeView;
+		private MultiSelectTreeView EditorTreeView;
 		private System.Windows.Forms.PropertyGrid EditorPropertyGrid;
 		private System.Windows.Forms.StatusStrip EditorStatusStrip;
 		private System.Windows.Forms.ToolStripStatusLabel EditorStatusLabel;
