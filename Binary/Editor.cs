@@ -327,7 +327,13 @@ namespace Binary
 
             }
 
-            var manager = sdb.Database.GetManager(node.Parent.Text);
+            // Check for a valid manager, whether the node is a parent or a single node
+            var manager = node.Level == 0
+                ? sdb.Database.GetManager(node.Text) // Root/parent node manager
+                : node.Level == 1
+                    ? sdb.Database.GetManager(node.Text)
+                    : sdb.Database.GetManager(node.Parent.Text); // Child node manager
+
             this.EditorButtonExportNode.Enabled = manager != null;
         }
 
@@ -1221,6 +1227,30 @@ namespace Binary
                 return;
             }
 
+            // Show the Exporter form to let the user choose serialized or non-serialized
+            using var exporter = new Exporter() { StartPosition = FormStartPosition.CenterScreen };
+            if (exporter.ShowDialog() != DialogResult.OK) return;
+
+            bool serialized = exporter.Serialized; // Get the user's choice
+
+            if (this.EditorTreeView.SelectedNodes.Count == 1)
+            {
+                // Handle single node export with its children
+                ExportParentWithChildren(this.EditorTreeView.SelectedNode, serialized);
+            }
+            else
+            {
+                // Handle multiple node export
+                ExportMultipleNodes(this.EditorTreeView.SelectedNodes, serialized);
+            }
+        }
+        
+        private void ExportParentWithChildren(TreeNode selectedNode, bool serialized)
+        {
+            string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
+            string mname = selectedNode.Parent?.Text;
+            string cname = selectedNode.Text;
+
             using var dialog = new SaveFileDialog()
             {
                 AddExtension = true,
@@ -1228,34 +1258,111 @@ namespace Binary
                 CheckPathExists = true,
                 DefaultExt = ".BIN",
                 Filter = "Binary Files|*.BIN|Any Files|*.*",
-                FileName = this.EditorTreeView.SelectedNode?.Parent?.Text ?? this.EditorTreeView.SelectedNode?.Text ?? "MultipleExport",
+                FileName = cname,
                 OverwritePrompt = true,
                 SupportMultiDottedExtensions = true,
-                Title = "Select filename where collections should be exported",
+                Title = "Select filename for export",
             };
 
+            var sdb = this.Profile.Find(_ => _.Filename == fname);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                foreach (TreeNode selectedNode in this.EditorTreeView.SelectedNodes)
-                {
-                    string fname = selectedNode.Parent.Parent.Text;
-                    string mname = selectedNode.Parent.Text;
-                    string cname = selectedNode.Text;
+                using var bw = new BinaryWriter(File.Open(dialog.FileName, FileMode.Create));
 
-                    var sdb = this.Profile.Find(_ => _.Filename == fname);
+                // Export the parent node
+                if (selectedNode.Level == 1)
+                {
                     var manager = sdb.Database.GetManager(mname);
+
+                    if (manager == null)
+                    {
+                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
 
                     try
                     {
-                        using var bw = new BinaryWriter(File.Open(dialog.FileName, FileMode.Append));
-                        manager.Export(cname, bw, true); // Adjust to fit the export logic
+                        sdb.Database.Export(cname, cname, bw, serialized);
+                        MessageBox.Show($"Node '{cname}' successfully exported.", "Info", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Failed to export node: {cname}. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                MessageBox.Show($"Selected nodes have been successfully exported to {dialog.FileName}.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                {
+                    var manager = sdb.Database.GetManager(mname);
+
+                    if (manager == null)
+                    {
+                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    try
+                    {
+                        manager.Export(cname, bw, serialized);
+                        MessageBox.Show($"Node '{cname}' successfully exported.", "Info", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+        
+        private void ExportMultipleNodes(List<TreeNode> selectedNodes, bool serialized)
+        {
+            using var folderDialog = new FolderBrowserDialog()
+            {
+                Description = "Select folder to export multiple nodes.", ShowNewFolderButton = true
+            };
+
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                string saveDirectory = folderDialog.SelectedPath;
+
+                foreach (TreeNode selectedNode in selectedNodes)
+                {
+                    string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
+                    string cname = selectedNode.Text;
+
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
+                    var manager = selectedNode.Level == 0
+                        ? sdb.Database.GetManager(cname)
+                        : sdb.Database.GetManager(selectedNode.Parent.Text);
+
+                    if (manager == null)
+                    {
+                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        continue;
+                    }
+
+                    try
+                    {
+                        string filePath = Path.Combine(saveDirectory, $"{cname}.BIN");
+                        using var bw = new BinaryWriter(File.Open(filePath, FileMode.Create));
+
+                        // Export each node individually
+                        manager.Export(cname, bw, serialized); // Pass the serialized flag
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                MessageBox.Show("Selected nodes exported successfully.", "Info", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
         }
 
