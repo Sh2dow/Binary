@@ -1035,32 +1035,55 @@ namespace Binary
 
         private void EditorButtonRemoveNode_Click(object sender, EventArgs e)
         {
-            // This button is enabled only in collections, so it is 
-            // safe to assume that we are in a collection TreeNode
+            var selectedNodes = this.EditorTreeView.SelectedNodes; // Assume SelectedNodes is a List<TreeNode>
 
-            string fname = this.EditorTreeView.SelectedNode.Parent.Parent.Text;
-            string mname = this.EditorTreeView.SelectedNode.Parent.Text;
-            string cname = this.EditorTreeView.SelectedNode.Text;
-
-            var sdb = this.Profile.Find(_ => _.Filename == fname);
-            var manager = sdb.Database.GetManager(mname);
-
-            try
+            if (selectedNodes.Count == 0)
             {
-
-                this.EditorPropertyGrid.SelectedObject = null;
-                manager.Remove(cname);
-                string str = this.GenerateEndCommand(eCommandType.remove_collection, this.EditorTreeView.SelectedNode.FullPath);
-                this.WriteLineToEndCommandPrompt(str);
-                this.EditorTreeView.SelectedNode.Remove();
-                this._edited = true;
-
+                MessageBox.Show("Please select one or more nodes to remove.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception ex)
+
+            bool canProceed = true;
+            if (selectedNodes.Count > 1)
             {
+                var confirmResult = MessageBox.Show("Are you sure to delete the selected nodes?", "Confirm Delete",
+                    MessageBoxButtons.YesNo);
+                if (confirmResult != DialogResult.Yes)
+                {
+                    canProceed = false;
+                }
+            }
 
-                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (canProceed)
+            {
+                // Collect nodes to remove
+                var nodesToRemove = new List<TreeNode>(selectedNodes);
 
+                foreach (TreeNode node in nodesToRemove) // Iterate over the copy of selectedNodes
+                {
+                    string fname = node.Parent.Parent.Text;
+                    string mname = node.Parent.Text;
+                    string cname = node.Text;
+
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
+                    var manager = sdb.Database.GetManager(mname);
+
+                    try
+                    {
+                        this.EditorPropertyGrid.SelectedObject = null;
+                        manager.Remove(cname);
+                        string str = this.GenerateEndCommand(eCommandType.remove_collection, node.FullPath);
+                        this.WriteLineToEndCommandPrompt(str);
+                        this.EditorTreeView.Nodes.Remove(node); // Directly remove from TreeView
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                this._edited = true;
+                this.EditorTreeView.Refresh();
             }
         }
 
@@ -1245,12 +1268,56 @@ namespace Binary
             }
         }
         
+        private void _EditorButtonExportNode_Click(object sender, EventArgs e)
+        {
+            if (this.EditorTreeView.SelectedNodes.Count == 0)
+            {
+                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using var dialog = new SaveFileDialog()
+            {
+                AddExtension = true,
+                AutoUpgradeEnabled = true,
+                CheckPathExists = true,
+                DefaultExt = ".BIN",
+                Filter = "Binary Files|*.BIN|Any Files|*.*",
+                FileName = this.EditorTreeView.SelectedNode?.Parent?.Text ?? this.EditorTreeView.SelectedNode?.Text ?? "MultipleExport",
+                OverwritePrompt = true,
+                SupportMultiDottedExtensions = true,
+                Title = "Select filename where collections should be exported",
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                foreach (TreeNode selectedNode in this.EditorTreeView.SelectedNodes)
+                {
+                    string fname = selectedNode.Parent.Text;
+                    string mname = selectedNode.Text;
+                    string cname = selectedNode.Text;
+
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
+                    var manager = sdb.Database.GetManager(mname);
+
+                    try
+                    {
+                        using var bw = new BinaryWriter(File.Open(dialog.FileName, FileMode.Append));
+                        manager.Export(cname, bw, true); // Adjust to fit the export logic
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to export node: {cname}. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                MessageBox.Show($"Selected nodes have been successfully exported to {dialog.FileName}.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        
         private void ExportParentWithChildren(TreeNode selectedNode, bool serialized)
         {
-            string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
-            string mname = selectedNode.Parent?.Text;
             string cname = selectedNode.Text;
-
+            
             using var dialog = new SaveFileDialog()
             {
                 AddExtension = true,
@@ -1264,7 +1331,6 @@ namespace Binary
                 Title = "Select filename for export",
             };
 
-            var sdb = this.Profile.Find(_ => _.Filename == fname);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 using var bw = new BinaryWriter(File.Open(dialog.FileName, FileMode.Create));
@@ -1272,6 +1338,10 @@ namespace Binary
                 // Export the parent node
                 if (selectedNode.Level == 1)
                 {
+                    string fname = selectedNode.Parent.Text;
+                    string mname = selectedNode.Text;
+                    
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
                     var manager = sdb.Database.GetManager(mname);
 
                     if (manager == null)
@@ -1294,6 +1364,10 @@ namespace Binary
                 }
                 else
                 {
+                    string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
+                    string mname = selectedNode.Parent?.Text;
+                    
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
                     var manager = sdb.Database.GetManager(mname);
 
                     if (manager == null)
@@ -1367,72 +1441,81 @@ namespace Binary
         }
 
         static string m_importNodeLastDir = null;
+        
         private void EditorButtonImportNode_Click(object sender, EventArgs e)
         {
-            // This button is enabled only in managers, so it is 
-            // safe to assume that we are in a manager TreeNode
+            var selectedNodes = this.EditorTreeView.SelectedNodes;
 
-            string fname = this.EditorTreeView.SelectedNode.Parent.Text;
-            string mname = this.EditorTreeView.SelectedNode.Text;
-
-            var sdb = this.Profile.Find(_ => _.Filename == fname);
-            var manager = sdb.Database.GetManager(mname);
-
-            using var importer = new Importer()
+            if (selectedNodes.Count == 0)
             {
-                StartPosition = FormStartPosition.CenterScreen
+                MessageBox.Show("Please select one or more nodes to import.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using var openFileDialog = new OpenFileDialog()
+            {
+                AutoUpgradeEnabled = true,
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Filter = "Binary Files|*.bin|All Files|*.*",
+                Multiselect = true, // Allow multiple file selection
+                SupportMultiDottedExtensions = true,
+                Title = "Select files with collections to import"
             };
 
-            if (importer.ShowDialog() == DialogResult.OK)
+            if (!string.IsNullOrEmpty(m_importNodeLastDir))
             {
+                openFileDialog.InitialDirectory = m_importNodeLastDir;
+            }
 
-                using var dialog = new OpenFileDialog()
-                {
-                    AutoUpgradeEnabled = true,
-                    CheckFileExists = true,
-                    CheckPathExists = true,
-                    Filter = "Binary Files|*.bin|All Files|*.*",
-                    Multiselect = false,
-                    SupportMultiDottedExtensions = true,
-                    Title = "Select file with collection to import"
-                };
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                m_importNodeLastDir = Path.GetDirectoryName(openFileDialog.FileNames[0]);
 
-                if (!String.IsNullOrEmpty(m_importNodeLastDir))
+                // Iterate through each selected node
+                foreach (var node in selectedNodes)
                 {
-                    dialog.InitialDirectory = m_importNodeLastDir;
+                    string fname = node.Parent?.Text;
+                    string mname = node.Text;
+
+                    var sdb = this.Profile.Find(_ => _.Filename == fname);
+                    var manager = sdb?.Database?.GetManager(mname);
+
+                    if (manager == null)
+                    {
+                        MessageBox.Show($"Manager not found for node: {mname}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        continue;
+                    }
+
+                    using var importer = new Importer()
+                    {
+                        StartPosition = FormStartPosition.CenterScreen
+                    };
+
+                    if (importer.ShowDialog() == DialogResult.OK)
+                    {
+                        foreach (var fileName in openFileDialog.FileNames) // Process multiple files
+                        {
+                            try
+                            {
+                                var type = (Nikki.Reflection.Enum.SerializeType)importer.SerializationIndex;
+                                using var br = new BinaryReader(File.Open(fileName, FileMode.Open));
+                                
+                                // Import the file
+                                manager.Import(type, br);
+                                this._edited = true;
+                                Console.WriteLine($"{fileName} imported successfully.");
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Failed to import node '{mname}'. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
                 }
 
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-
-                    m_importNodeLastDir = Path.GetDirectoryName(dialog.FileName);
-
-#if !DEBUG
-					try
-					{
-#endif
-
-                    var type = (Nikki.Reflection.Enum.SerializeType)importer.SerializationIndex;
-                    using var br = new BinaryReader(File.Open(dialog.FileName, FileMode.Open));
-                    manager.Import(type, br);
-                    MessageBox.Show($"File {dialog.FileName} has been imported with type {type}", "Info",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.LoadTreeView(this.EditorTreeView.SelectedNode.FullPath);
-                    this._edited = true;
-
-#if !DEBUG
-					}
-					catch (Exception ex)
-					{
-					
-						MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-						return;
-					
-					}
-#endif
-
-                }
-
+                // Refresh TreeView after all imports
+                this.LoadTreeView(this.EditorTreeView.SelectedNode.FullPath);
             }
         }
 
@@ -1771,19 +1854,35 @@ namespace Binary
 
         private void EditorTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            Console.WriteLine(e.Node.FullPath);
-            var selected = Utils.GetReflective(e.Node.FullPath, this.EditorTreeView.PathSeparator, this.Profile);
+            var selectedNodes = this.EditorTreeView.SelectedNodes; // Assume `SelectedNodes` is a List<TreeNode>
+    
+            if (selectedNodes.Count == 0)
+            {
+                this.EditorButtonRemoveNode.Enabled = false;
+                return;
+            }
 
-            this.ManageButtonOpenEditor(selected);
-            this.ManageButtonAddNode(e.Node);
-            this.ManageButtonRemoveNode(e.Node);
-            this.ManageButtonCopyNode(e.Node);
-            this.ManageButtonExportNode(e.Node);
-            this.ManageButtonImportNode(e.Node);
-            this.ManageButtonScriptNode(e.Node);
+            // Iterate over selected nodes
+            foreach (TreeNode node in selectedNodes)
+            {
+                if (node.TreeView != null)  // Ensure node is part of a TreeView
+                {
+                    Console.WriteLine(node.FullPath);
+                    var selected = Utils.GetReflective(node.FullPath, this.EditorTreeView.PathSeparator, this.Profile);
 
-            this.EditorPropertyGrid.SelectedObject = selected;
-            this.EditorNodeInfo.Text = $"| Index: {e.Node.Index} | {e.Node.Nodes.Count} subnodes";
+                    // Continue with the rest of your logic
+                    this.ManageButtonOpenEditor(selected);
+                    this.ManageButtonAddNode(node);
+                    this.ManageButtonRemoveNode(node);
+                    this.ManageButtonCopyNode(node);
+                    this.ManageButtonExportNode(node);
+                    this.ManageButtonImportNode(node);
+                    this.ManageButtonScriptNode(node);
+
+                    this.EditorPropertyGrid.SelectedObject = selected;
+                    this.EditorNodeInfo.Text = $"| Index: {node.Index} | {node.Nodes.Count} subnodes";
+                }
+            }
         }
 
         private void EditorTreeView_DoubleClick(object sender, EventArgs e)
