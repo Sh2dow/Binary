@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
+
 using Endscript.Core;
 
+using Microsoft.Win32;
+
+using System.Windows;
 
 
 namespace Binary.Interact
 {
-	public partial class LanMaker : Form
+	public partial class LanMaker : Window
 	{
 		private bool IsValidDirectoryChosen => Directory.Exists(this.LanMakerTextBoxDir.Text);
 		public bool WasCreated { get; private set; }

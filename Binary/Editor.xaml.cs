@@ -14,37 +14,49 @@ using Endscript.Profiles;
 using Nikki.Core;
 using Nikki.Reflection.Abstract;
 using Nikki.Reflection.Interface;
-using Nikki.Support.Shared.Class;
 using Nikki.Utils;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
+
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using PropertyValueChangedEventArgs = Xceed.Wpf.Toolkit.PropertyGrid.PropertyValueChangedEventArgs;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace Binary
 {
-    public partial class Editor : Form
+    public partial class Editor : Window
     {
         private BaseProfile Profile { get; set; }
-        private readonly List<Form> _openforms;
+        private readonly List<Window> _openforms;
         private const string empty = "\"\"";
         private const string space = " ";
         private bool _edited = false;
-
+        
         public Editor()
         {
-            this._openforms = new List<Form>();
-            this.InitializeComponent();
+            this._openforms = new List<Window>();
+            InitializeComponent();
+            this.DataContext = new EditorViewModel(); // Set ViewModel as DataContext
+            
             this.splitContainer2.FixedPanel = FixedPanel.Panel1;
             this.ToggleTheme();
         }
 
+        // Example event handler for TreeView selection changed
+        private void OnTreeViewSelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var selectedNode = e.NewValue as TreeViewItemModel; // Assuming you have a model
+            var viewModel = this.DataContext as EditorViewModel;
+            viewModel.SelectedNode = selectedNode;
+        }
         #region Theme
 
         private void ToggleTheme()
@@ -156,7 +168,7 @@ namespace Binary
         }
 
         #endregion
-
+        
         #region Manage Controls
 
         private void CreateBackupsForFiles(bool forced)
@@ -186,7 +198,7 @@ namespace Binary
                     {
 
                         _ = MessageBox.Show("All files have been successfully backed up.", "Success",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBoxButton.OK, MessageBoxImage.Information);
 
                     }
 
@@ -205,7 +217,7 @@ namespace Binary
                 if (forced)
                 {
 
-                    _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 }
 
@@ -402,7 +414,7 @@ namespace Binary
             {
 
                 var result = MessageBox.Show("New launcher was created. Would you like to load it?", "Prompt",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == DialogResult.Yes)
                 {
@@ -423,7 +435,7 @@ namespace Binary
             {
 
                 var result = MessageBox.Show("You have unsaved changes. Are you sure you want to load " +
-                    "another database?", "Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    "another database?", "Prompt", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == DialogResult.No)
                 {
@@ -465,7 +477,7 @@ namespace Binary
                 {
 
                     var result = MessageBox.Show("You have unsaved changes. Are you sure you reload " +
-                        "database?", "Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        "database?", "Prompt", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                     if (result == DialogResult.No)
                     {
@@ -480,7 +492,7 @@ namespace Binary
             {
 
                 _ = MessageBox.Show($"Launch file {file} does not exist or was moved.", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
 
             }
         }
@@ -527,7 +539,7 @@ namespace Binary
                     Environment.NewLine + $"Command: [{parser.CurrentLine}]" + Environment.NewLine +
                     $"Error: {ex.GetLowestMessage()}";
 
-                _ = MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
 
             }
@@ -573,7 +585,7 @@ namespace Binary
             catch (Exception ex)
             {
 
-                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
 
             }
@@ -605,7 +617,7 @@ namespace Binary
             {
 
                 _ = MessageBox.Show($"Script {script} has been successfully applied. Do not forget to save changes!",
-                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
 
@@ -660,7 +672,7 @@ namespace Binary
                     {
 
                         _ = MessageBox.Show("No backup files were found.", "Warning",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
 
                     }
@@ -668,7 +680,7 @@ namespace Binary
                     this.LoadProfile(Configurations.Default.LaunchFile, true);
 
                     _ = MessageBox.Show("All backups have been successfully restored.", "Success",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBoxButton.OK, MessageBoxImage.Information);
 
                 }
                 else
@@ -682,7 +694,7 @@ namespace Binary
             catch (Exception ex)
             {
 
-                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
         }
@@ -720,7 +732,7 @@ namespace Binary
 			catch (Exception ex)
 			{
 
-				MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
 			}
 #endif
@@ -738,7 +750,7 @@ namespace Binary
             if (this.Profile is null)
             {
 
-                MessageBox.Show("No profile was loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("No profile was loaded.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
 
             }
@@ -764,7 +776,7 @@ namespace Binary
 			catch (Exception ex)
 			{
 
-				MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 
 			}
@@ -809,7 +821,7 @@ namespace Binary
             if (this.Profile is null)
             {
 
-                _ = MessageBox.Show("No profile was loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _ = MessageBox.Show("No profile was loaded.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
 
             }
@@ -843,7 +855,7 @@ namespace Binary
                 string error = $"Error has occured -> Line: {count}" + Environment.NewLine +
                     $"Command: [{command}]" + Environment.NewLine + $"Error: {ex.GetLowestMessage()}";
 
-                _ = MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
 
@@ -917,7 +929,7 @@ namespace Binary
             catch (Exception ex)
             {
 
-                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
         }
@@ -928,9 +940,9 @@ namespace Binary
             _ = Process.Start(new ProcessStartInfo() { FileName = path });
         }
 
-        private void EMSHelpAbout_Click(object sender, EventArgs e) => MessageBox.Show("Binary by MaxHwoy v" + this.ProductVersion, "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void EMSHelpAbout_Click(object sender, EventArgs e) => MessageBox.Show("Binary by MaxHwoy v" + this.ProductVersion, "About", MessageBoxButton.OK, MessageBoxImage.Information);
 
-        private void EMSHelpTutorials_Click(object sender, EventArgs e) => MessageBox.Show("Join Discord server at the start page to get help and full tool documentation!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        private void EMSHelpTutorials_Click(object sender, EventArgs e) => MessageBox.Show("Join Discord server at the start page to get help and full tool documentation!", "Info", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
         private void EMSOptionsSpeedReflect_Click(object sender, EventArgs e)
         {
@@ -973,7 +985,7 @@ namespace Binary
 				catch (Exception ex)
 				{
 
-					MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
 				}
 #endif
@@ -1018,7 +1030,7 @@ namespace Binary
                     catch (Exception ex)
                     {
 
-                        _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     }
 
@@ -1039,7 +1051,7 @@ namespace Binary
 
             if (selectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to remove.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to remove.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1047,7 +1059,7 @@ namespace Binary
             if (selectedNodes.Count > 1)
             {
                 var confirmResult = MessageBox.Show("Are you sure to delete the selected nodes?", "Confirm Delete",
-                    MessageBoxButtons.YesNo);
+                    MessageBoxButton.YesNo);
                 if (confirmResult != DialogResult.Yes)
                 {
                     canProceed = false;
@@ -1078,7 +1090,7 @@ namespace Binary
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
 
@@ -1123,7 +1135,7 @@ namespace Binary
                     catch (Exception ex)
                     {
 
-                        _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     }
 
@@ -1171,7 +1183,7 @@ namespace Binary
             else if (collection is FNGroup fng)
             {
                 if (MessageBox.Show("Binary cannot edit FNGroups, but can import and delete them. To edit FNGroups, use FEngLib by heyitsleo. Would you like to open the GitHub page?",
-                    "Binary", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    "Binary", MessageBoxButton.YesNo, MessageBoxImage.Information) == DialogResult.Yes)
                 {
                     Utils.OpenBrowser("https://github.com/NFSTools/FEngLib");
                 }
@@ -1246,7 +1258,7 @@ namespace Binary
         {
             if (this.EditorTreeView.SelectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1272,7 +1284,7 @@ namespace Binary
         {
             if (this.EditorTreeView.SelectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1307,10 +1319,10 @@ namespace Binary
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Failed to export node: {cname}. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Failed to export node: {cname}. Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                MessageBox.Show($"Selected nodes have been successfully exported to {dialog.FileName}.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Selected nodes have been successfully exported to {dialog.FileName}.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         
@@ -1346,20 +1358,20 @@ namespace Binary
 
                     if (manager == null)
                     {
-                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
+                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                     }
 
                     try
                     {
                         sdb.Database.Export(cname, cname, bw, serialized);
-                        MessageBox.Show($"Node '{cname}' successfully exported.", "Info", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        MessageBox.Show($"Node '{cname}' successfully exported.", "Info", MessageBoxButton.OK,
+                            MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 else
@@ -1372,21 +1384,21 @@ namespace Binary
 
                     if (manager == null)
                     {
-                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
+                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                         return;
                     }
 
                     try
                     {
                         manager.Export(cname, bw, serialized);
-                        MessageBox.Show($"Node '{cname}' successfully exported.", "Info", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        MessageBox.Show($"Node '{cname}' successfully exported.", "Info", MessageBoxButton.OK,
+                            MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -1415,8 +1427,8 @@ namespace Binary
 
                     if (manager == null)
                     {
-                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
+                        MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                         continue;
                     }
 
@@ -1431,12 +1443,12 @@ namespace Binary
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
 
-                MessageBox.Show("Selected nodes exported successfully.", "Info", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show("Selected nodes exported successfully.", "Info", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
         }
 
@@ -1448,7 +1460,7 @@ namespace Binary
 
             if (selectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to import.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to import.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1483,7 +1495,7 @@ namespace Binary
 
                     if (manager == null)
                     {
-                        MessageBox.Show($"Manager not found for node: {mname}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Manager not found for node: {mname}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         continue;
                     }
 
@@ -1508,7 +1520,7 @@ namespace Binary
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"Failed to import node '{mname}'. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show($"Failed to import node '{mname}'. Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
                         }
                     }
@@ -1691,7 +1703,7 @@ namespace Binary
             foreach (string exception in exceptions)
             {
 
-                MessageBox.Show(exception, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exception, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
 
@@ -1716,7 +1728,7 @@ namespace Binary
 				if (showerrors)
 				{
 			
-					MessageBox.Show(e.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(e.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			
 				}
 			
@@ -1807,7 +1819,7 @@ namespace Binary
             foreach (string exception in exceptions)
             {
 
-                MessageBox.Show(exception, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exception, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
 
@@ -1820,7 +1832,7 @@ namespace Binary
 			catch (Exception ex)
 			{
 
-				MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
 			}
 #endif
@@ -2062,7 +2074,7 @@ namespace Binary
             {
 
                 var result = MessageBox.Show("You have unsaved changes. Are you sure you want to quit the editor?",
-                    "Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    "Prompt", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == DialogResult.No) { e.Cancel = true; return; }
 

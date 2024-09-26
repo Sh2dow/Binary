@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
+
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Binary.Tools;
@@ -12,15 +12,19 @@ using Nikki.Support.Shared.Class;
 using CoreExtensions.Management;
 using Nikki.Utils;
 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
 namespace Binary.UI
 {
-	public partial class StringEditor : Form
+	public partial class StringEditor : Window
 	{
 		private const string Key = "Key";
 		private const string Label = "Label";
 		private const string TText = "Text";
 		private STRBlock STR { get; }
-		private readonly List<Form> _openforms;
+		private readonly List<Window> _openforms;
 		private readonly HashSet<string> _modified;
 		public List<string> Commands { get; }
 		private readonly string _strpath;
@@ -36,7 +40,7 @@ namespace Binary.UI
 			this.splitContainer1.FixedPanel = FixedPanel.Panel1;
 			this.STR = str;
 			this._strpath = path;
-			this._openforms = new List<Form>();
+			this._openforms = new List<Window>();
 			this._modified = new HashSet<string>();
 			this.Commands = new List<string>();
 			this.Text = $"{this.STR.CollectionName} Editor";

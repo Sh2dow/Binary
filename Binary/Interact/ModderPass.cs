@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Windows.Forms;
+
 using Binary.Properties;
 using Nikki.Utils;
 using CoreExtensions.Text;
 
+using System.Windows;
 
 
 namespace Binary.Interact
 {
-	public partial class ModderPass : Form
+	public partial class ModderPass : Window
 	{
 		private static readonly byte[] password = new byte[]
 		{

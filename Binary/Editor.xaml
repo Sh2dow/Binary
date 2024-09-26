@@ -1,0 +1,51 @@
+<Window x:Class="Binary.Editor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Editor" Height="600" Width="1000">
+
+    <DockPanel>
+        <!-- Menu -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Main">
+                <MenuItem Header="New Launcher" Command="{Binding NewLauncherCommand}" />
+                <MenuItem Header="Load Files" Command="{Binding LoadFilesCommand}" />
+                <MenuItem Header="Save Files" Command="{Binding SaveFilesCommand}" />
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Hasher" Command="{Binding HasherCommand}" />
+                <MenuItem Header="Raider" Command="{Binding RaiderCommand}" />
+                <MenuItem Header="Swatcher" Command="{Binding SwatcherCommand}" />
+            </MenuItem>
+            <MenuItem Header="Options">
+                <MenuItem Header="Create Files Backups" Command="{Binding CreateBackupsCommand}" />
+                <MenuItem Header="Restore Files Backups" Command="{Binding RestoreBackupsCommand}" />
+                <MenuItem Header="Toggle Theme" Command="{Binding ToggleThemeCommand}" />
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Command="{Binding AboutCommand}" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Main Layout -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- TreeView for navigation -->
+            <TreeView Grid.Column="0" ItemsSource="{Binding TreeViewItems}"
+                      SelectedItemChanged="OnTreeViewSelectionChanged">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Name}" />
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+            <!-- Property Grid / Content Control for detailed view -->
+            <ContentControl Grid.Column="1" Content="{Binding SelectedObject}" />
+        </Grid>
+    </DockPanel>
+</Window>

@@ -12,6 +12,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
+using Binary;
+
 namespace Binary
 {
     public class CLI

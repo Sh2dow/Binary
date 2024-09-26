@@ -1,8 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System.Windows;
+
 
 namespace Binary.UI
 {
-    public partial class VectorDisplay : Form
+    public partial class VectorDisplay : Window
     {
         public VectorDisplay() => this.InitializeComponent();
     }

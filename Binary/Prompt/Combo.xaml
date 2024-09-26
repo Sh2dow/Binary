@@ -1,0 +1,21 @@
+﻿<Window x:Class="Binary.Prompt.Combo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Combo" Height="250" Width="400">
+    <Grid>
+        <!-- Description Label -->
+        <Label x:Name="DescriptionLabel" Content="Description" HorizontalAlignment="Center" VerticalAlignment="Top"
+               Margin="10" />
+
+        <!-- ComboBox for Selection -->
+        <ComboBox x:Name="ComboBoxSelection" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" />
+
+        <!-- OK Button -->
+        <Button x:Name="ComboButtonOK" Content="OK" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Margin="50,0,0,20" Width="100" Click="ComboButtonOK_Click" />
+
+        <!-- Cancel Button -->
+        <Button x:Name="ComboButtonCancel" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="0,0,50,20" Width="100" Click="ComboButtonCancel_Click" />
+    </Grid>
+</Window>

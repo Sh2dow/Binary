@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Windows;
+
 
 
 
 namespace Binary.Interact
 {
-    public partial class Exporter : Form
+    public partial class Exporter : Window
     {
         public bool Serialized { get; private set; } = true;
 

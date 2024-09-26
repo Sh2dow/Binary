@@ -1,0 +1,41 @@
+﻿<Window x:Class="Binary.Tools.Hasher"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Hasher" Height="350" Width="600">
+    <Grid>
+        <!-- Labels -->
+        <Label x:Name="label1" Content="Input String" HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="20,20,0,0" />
+        <Label x:Name="label2" Content="Bin Hash" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,80,0,0" />
+        <Label x:Name="label3" Content="Bin File Hash" HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="20,140,0,0" />
+        <Label x:Name="label4" Content="Vlt Hash" HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="20,200,0,0" />
+        <Label x:Name="label5" Content="Vlt File Hash" HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="20,260,0,0" />
+
+        <!-- Textboxes -->
+        <TextBox x:Name="StringTextbox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400"
+                 Margin="120,20,0,0" TextChanged="StringTextbox_TextChanged" />
+        <TextBox x:Name="BinHashTextbox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400"
+                 Margin="120,80,0,0" IsReadOnly="True" />
+        <TextBox x:Name="BinFileTextbox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400"
+                 Margin="120,140,0,0" IsReadOnly="True" />
+        <TextBox x:Name="VltHashTextbox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400"
+                 Margin="120,200,0,0" IsReadOnly="True" />
+        <TextBox x:Name="VltFileTextbox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="400"
+                 Margin="120,260,0,0" IsReadOnly="True" />
+
+        <!-- Buttons -->
+        <Button x:Name="CopyString" Content="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75"
+                Margin="0,20,20,0" Click="CopyString_Click" />
+        <Button x:Name="CopyBinHash" Content="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75"
+                Margin="0,80,20,0" Click="CopyBinHash_Click" />
+        <Button x:Name="CopyBinFile" Content="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75"
+                Margin="0,140,20,0" Click="CopyBinFile_Click" />
+        <Button x:Name="CopyVltHash" Content="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75"
+                Margin="0,200,20,0" Click="CopyVltHash_Click" />
+        <Button x:Name="CopyVltFile" Content="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75"
+                Margin="0,260,20,0" Click="CopyVltFile_Click" />
+    </Grid>
+</Window>

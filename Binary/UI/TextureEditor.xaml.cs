@@ -2,7 +2,7 @@
 using System.IO;
 using System.Drawing;
 using System.Collections;
-using System.Windows.Forms;
+
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -19,14 +19,20 @@ using Endscript.Enums;
 using CoreExtensions.Management;
 using CoreExtensions.Text;
 
+using System.Windows;
+using System.Windows.Controls;
+
+using Xceed.Wpf.Toolkit.PropertyGrid;
+
+using Image = System.Drawing.Image;
 
 
 namespace Binary.UI
 {
-	public partial class TextureEditor : Form
+	public partial class TextureEditor : Window
 	{
 		private TPKBlock TPK { get; }
-		private readonly List<Form> _openforms;
+		private readonly List<Window> _openforms;
 		private readonly string _tpkpath;
 		public List<string> Commands { get; }
 		private int _last_column_clicked = -1;
@@ -36,7 +42,7 @@ namespace Binary.UI
 			this.InitializeComponent();
 			this.TPK = tpk;
 			this._tpkpath = path;
-			this._openforms = new List<Form>();
+			this._openforms = new List<Window>();
 			this.Commands = new List<string>();
 			this.Text = $"{this.TPK.CollectionName} Editor";
 			this.TexEditorImage.BackColor = Color.FromArgb(0, 0, 0, 0);

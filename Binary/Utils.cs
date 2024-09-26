@@ -17,7 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
+
 
 namespace Binary
 {
@@ -168,13 +168,13 @@ namespace Binary
             return launch;
         }
 
-        public static TreeNode GetTreeNodesFromSDB(SynchronizedDatabase sdb)
+        public static TreeViewItemModel GetTreeNodesFromSDB(SynchronizedDatabase sdb)
         {
-            var result = new TreeNode(sdb.Filename);
+            var result = new TreeViewItemModel(sdb.Filename);
 
             foreach (var manager in sdb.Database.Managers)
             {
-                var managenode = new TreeNode(manager.Name);
+                var managenode = new TreeViewItemModel(manager.Name);
 
                 foreach (Collectable collection in manager)
                 {
@@ -190,19 +190,19 @@ namespace Binary
             return result;
         }
 
-        public static TreeNode GetCollectionNodes(Collectable collection)
+        public static TreeViewItemModel GetCollectionNodes(Collectable collection)
         {
-            var result = new TreeNode(collection.CollectionName);
+            var result = new TreeViewItemModel(collection.CollectionName);
 
             foreach (var expando in collection.GetAllNodes())
             {
 
-                var expandnode = new TreeNode(expando.NodeName);
+                var expandnode = new TreeViewItemModel(expando.NodeName);
 
                 foreach (var subpart in expando.SubNodes)
                 {
 
-                    var subnode = new TreeNode(subpart.NodeName);
+                    var subnode = new TreeViewItemModel(subpart.NodeName);
                     _ = expandnode.Nodes.Add(subnode);
 
                 }

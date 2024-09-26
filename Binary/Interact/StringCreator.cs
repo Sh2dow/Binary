@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Windows.Forms;
+
 using System.ComponentModel;
 using Nikki.Utils;
 using Nikki.Support.Shared.Parts.STRParts;
 using CoreExtensions.Text;
 using CoreExtensions.Native;
 
+using System.Windows;
 
 
 namespace Binary.Interact
 {
-    public partial class StringCreator : Form
+    public partial class StringCreator : Window
     {
         public string Key { get; private set; }
         public string Label { get; private set; }

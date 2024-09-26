@@ -2,71 +2,62 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using System.Windows.Controls;
+
+using System.Windows.Input;
 
 namespace Binary.UI;
 
 public class MultiSelectTreeView : TreeView
 {
-    private List<TreeNode> selectedNodes = new List<TreeNode>();
+    private List<TreeViewItemModel> selectedNodes = new List<TreeViewItemModel>();
 
-    public List<TreeNode> SelectedNodes => selectedNodes;
+    public List<TreeViewItemModel> SelectedNodes => selectedNodes;
 
-    protected override void OnMouseDown(MouseEventArgs e)
+    protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
-        TreeNode clickedNode = this.GetNodeAt(e.Location);
-
+        TreeViewItem clickedNode = e.Source as TreeViewItem;
         if (clickedNode != null)
         {
-            if (Control.ModifierKeys == Keys.Control)
+            TreeViewItemModel nodeModel = clickedNode.DataContext as TreeViewItemModel;
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
             {
-                // Ctrl-click to add/remove individual nodes
-                ToggleNodeSelection(clickedNode);
+                ToggleNodeSelection(nodeModel);
             }
-            else if (Control.ModifierKeys == Keys.Shift && selectedNodes.Count > 0)
+            else if (Keyboard.Modifiers == ModifierKeys.Shift && selectedNodes.Count > 0)
             {
-                // Shift-click to select a range of nodes within the same parent
-                TreeNode firstNode = selectedNodes.First();
-                if (clickedNode.Parent == firstNode.Parent)
-                {
-                    SelectNodeRange(firstNode, clickedNode);
-                }
+                SelectNodeRange(selectedNodes.First(), nodeModel);
             }
             else
             {
-                // Normal click selects only one node
                 ClearSelection();
-                AddNodeToSelection(clickedNode);
+                AddNodeToSelection(nodeModel);
             }
-
-            // Update the UI to show the selected node
-            this.SelectedNode = clickedNode;
         }
 
-        base.OnMouseDown(e);
+        base.OnPreviewMouseDown(e);
     }
 
-    private void AddNodeToSelection(TreeNode node)
+    private void AddNodeToSelection(TreeViewItemModel node)
     {
         if (!selectedNodes.Contains(node))
         {
             selectedNodes.Add(node);
-            // Visual feedback: change node background color for selected nodes
-            node.BackColor = Color.LightBlue;
+            // Add visual changes here (e.g., highlight selected node)
         }
     }
 
-    private void RemoveNodeFromSelection(TreeNode node)
+    private void RemoveNodeFromSelection(TreeViewItemModel node)
     {
         if (selectedNodes.Contains(node))
         {
             selectedNodes.Remove(node);
-            // Reset visual feedback
-            node.BackColor = this.BackColor;
+            // Remove visual changes here (e.g., un-highlight node)
         }
     }
 
-    private void ToggleNodeSelection(TreeNode node)
+    private void ToggleNodeSelection(TreeViewItemModel node)
     {
         if (selectedNodes.Contains(node))
         {
@@ -78,30 +69,27 @@ public class MultiSelectTreeView : TreeView
         }
     }
 
-    private void SelectNodeRange(TreeNode startNode, TreeNode endNode)
+    private void SelectNodeRange(TreeViewItemModel startNode, TreeViewItemModel endNode)
     {
+        // Clear previous selection before selecting a range
+        ClearSelection();
+
         if (startNode.Parent == endNode.Parent)
         {
-            ClearSelection(); // Clear previous selection before selecting a range
-
-            TreeNode parent = startNode.Parent;
-            int startIndex = parent.Nodes.IndexOf(startNode);
-            int endIndex = parent.Nodes.IndexOf(endNode);
+            var parent = startNode.Parent;
+            int startIndex = parent.Children.IndexOf(startNode);
+            int endIndex = parent.Children.IndexOf(endNode);
 
             for (int i = Math.Min(startIndex, endIndex); i <= Math.Max(startIndex, endIndex); i++)
             {
-                AddNodeToSelection(parent.Nodes[i]);
+                AddNodeToSelection(parent.Children[i]);
             }
         }
     }
 
     private void ClearSelection()
     {
-        foreach (TreeNode node in selectedNodes)
-        {
-            node.BackColor = this.BackColor; // Reset background color
-        }
-
         selectedNodes.Clear();
+        // Clear visual selection if needed
     }
 }

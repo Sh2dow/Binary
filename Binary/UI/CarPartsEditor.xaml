@@ -1,0 +1,59 @@
+﻿<Window x:Class="Binary.UI.CarPartsEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="{Binding Path=Model.CollectionName}" Height="600" Width="1000">
+    
+    <DockPanel>
+        <!-- Menu -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Parts">
+                <MenuItem Header="Add Part" Command="{Binding AddPartCommand}" />
+                <MenuItem Header="Remove Part" Command="{Binding RemovePartCommand}" />
+                <MenuItem Header="Copy Part" Command="{Binding CopyPartCommand}" />
+                <MenuItem Header="Move Up" Command="{Binding MoveUpPartCommand}" />
+                <MenuItem Header="Move Down" Command="{Binding MoveDownPartCommand}" />
+                <MenuItem Header="Move First" Command="{Binding MoveFirstPartCommand}" />
+                <MenuItem Header="Move Last" Command="{Binding MoveLastPartCommand}" />
+                <MenuItem Header="Reverse Parts" Command="{Binding ReversePartsCommand}" />
+                <MenuItem Header="Sort Parts By Name" Command="{Binding SortPartsByNameCommand}" />
+            </MenuItem>
+            <MenuItem Header="Attributes">
+                <MenuItem Header="Add Attribute" Click="AddAttributeToolStripMenuItem_Click" />
+                <MenuItem Header="Remove Attribute" Click="RemoveAttributeToolStripMenuItem_Click" />
+                <MenuItem Header="Move Up" Click="MoveUpAttributesToolStripMenuItem_Click" />
+                <MenuItem Header="Move Down" Click="MoveDownAttributesToolStripMenuItem_Click" />
+                <MenuItem Header="Reverse Attributes" Click="ReverseAttributesToolStripMenuItem_Click" />
+                <MenuItem Header="Sort By Key" Click="SortAttributesByKeyToolStripMenuItem_Click" />
+                <MenuItem Header="Add Custom Attribute" Click="AddCustomAttributeToolStripMenuItem_Click" />
+            </MenuItem>
+        </Menu>
+
+        <!-- TreeView to display car parts -->
+        <TreeView ItemsSource="{Binding Model.ModelCarParts}"
+                  SelectedItemChanged="CarPartsTreeView_SelectedItemChanged">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Attributes}">
+                    <TextBlock Text="{Binding PartName}" />
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!-- TreeView for parts and attributes -->
+            <TreeView x:Name="CarPartsTreeView" SelectedItemChanged="CarPartsTreeView_SelectedItemChanged" />
+
+            <!-- Property Grid (Replace with Xceed Toolkit or a similar third-party library) -->
+            <xctk:PropertyGrid x:Name="CarPartsPropertyGrid" Grid.Column="1" SelectedObject="{Binding SelectedObject}" />
+        </Grid>
+    </DockPanel>
+</Window>

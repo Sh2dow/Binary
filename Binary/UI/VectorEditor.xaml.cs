@@ -1,20 +1,18 @@
 ﻿using Binary.Properties;
-
 using CoreExtensions.Management;
-
+using Microsoft.Win32;
 using Nikki.Support.Shared.Class;
-
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
+using System.Windows;
 
-
+using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace Binary.UI
 {
-    public partial class VectorEditor : Form
+    public partial class VectorEditor : Window
     {
         private VectorVinyl Vector { get; }
 
@@ -83,7 +81,7 @@ namespace Binary.UI
 
         #region Methods
 
-        private object GetSelectedObject(TreeNode node)
+        private object GetSelectedObject(TreeViewItemModel node)
         {
             if (node is null || node.Level == 1)
             {
@@ -124,12 +122,12 @@ namespace Binary.UI
         {
             this.VectorTreeView.Nodes.Clear();
             this.VectorTreeView.BeginUpdate();
-            var nodes = new TreeNode[this.Vector.NumberOfPaths];
+            var nodes = new TreeViewItemModel[this.Vector.NumberOfPaths];
 
             for (int i = 0; i < this.Vector.NumberOfPaths; ++i)
             {
                 _ = this.Vector.GetPathSet(i);
-                var setnode = new TreeNode($"PathSet{i}");
+                var setnode = new TreeViewItemModel($"PathSet{i}");
                 nodes[i] = setnode;
 
             }
@@ -147,7 +145,7 @@ namespace Binary.UI
 
         private void RecursiveNodeSelection(string path, TreeNodeCollection nodes)
         {
-            foreach (TreeNode node in nodes)
+            foreach (TreeViewItemModel node in nodes)
             {
 
                 if (node.FullPath == path)
@@ -167,7 +165,7 @@ namespace Binary.UI
             }
         }
 
-        private void ToggleMenuStripControls(TreeNode node)
+        private void ToggleMenuStripControls(TreeViewItemModel node)
         {
             this.ImportSVGToolStripMenuItem.Enabled = true;
             this.ExportSVGToolStripMenuItem.Enabled = true;

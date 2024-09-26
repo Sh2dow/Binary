@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Windows;
+
 
 
 
 namespace Binary.Interact
 {
-	public partial class Importer : Form
+	public partial class Importer : Window
 	{
 		public int SerializationIndex { get; private set; } = 0;
 
