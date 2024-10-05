@@ -22,14 +22,14 @@ namespace Binary
 			base.Dispose(disposing);
 		}
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             this.EditorMenuStrip = new System.Windows.Forms.MenuStrip();
@@ -133,13 +133,7 @@ namespace Binary
             // EditorMenuStrip
             // 
             this.EditorMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.EditorMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EditorMenuStripMain,
-            this.EditorMenuStripTools,
-            this.EditorMenuStripOptions,
-            this.EditorMenuStripScripting,
-            this.EditorMenuStripWindows,
-            this.EditorMenuStripHelp});
+            this.EditorMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EditorMenuStripMain, this.EditorMenuStripTools, this.EditorMenuStripOptions, this.EditorMenuStripScripting, this.EditorMenuStripWindows, this.EditorMenuStripHelp });
             this.EditorMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.EditorMenuStrip.Name = "EditorMenuStrip";
             this.EditorMenuStrip.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
@@ -148,13 +142,7 @@ namespace Binary
             // 
             // EditorMenuStripMain
             // 
-            this.EditorMenuStripMain.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EMSMainNewLauncher,
-            this.EMSMainLoadFiles,
-            this.EMSMainReloadFiles,
-            this.EMSMainSaveFiles,
-            this.EMSMainImportEndscript,
-            this.EMSMainExit});
+            this.EditorMenuStripMain.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EMSMainNewLauncher, this.EMSMainLoadFiles, this.EMSMainReloadFiles, this.EMSMainSaveFiles, this.EMSMainImportEndscript, this.EMSMainExit });
             this.EditorMenuStripMain.Name = "EditorMenuStripMain";
             this.EditorMenuStripMain.Size = new System.Drawing.Size(46, 20);
             this.EditorMenuStripMain.Text = "Main";
@@ -212,10 +200,7 @@ namespace Binary
             // 
             // EditorMenuStripTools
             // 
-            this.EditorMenuStripTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EMSToolsHasher,
-            this.EMSToolsRaider,
-            this.EMSToolsSwatcher});
+            this.EditorMenuStripTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EMSToolsHasher, this.EMSToolsRaider, this.EMSToolsSwatcher });
             this.EditorMenuStripTools.Name = "EditorMenuStripTools";
             this.EditorMenuStripTools.Size = new System.Drawing.Size(47, 20);
             this.EditorMenuStripTools.Text = "Tools";
@@ -246,12 +231,7 @@ namespace Binary
             // 
             // EditorMenuStripOptions
             // 
-            this.EditorMenuStripOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EMSOptionsCreate,
-            this.EMSOptionsRestore,
-            this.EMSOptionsUnlock,
-            this.EMSOptionsSpeedReflect,
-            this.EMSOptionsToggle});
+            this.EditorMenuStripOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EMSOptionsCreate, this.EMSOptionsRestore, this.EMSOptionsUnlock, this.EMSOptionsSpeedReflect, this.EMSOptionsToggle });
             this.EditorMenuStripOptions.Name = "EditorMenuStripOptions";
             this.EditorMenuStripOptions.Size = new System.Drawing.Size(61, 20);
             this.EditorMenuStripOptions.Text = "Options";
@@ -299,11 +279,7 @@ namespace Binary
             // 
             // EditorMenuStripScripting
             // 
-            this.EditorMenuStripScripting.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EMSScriptingProcess,
-            this.EMSScriptingRunAll,
-            this.EMSScriptingGenerate,
-            this.EMSScriptingClear});
+            this.EditorMenuStripScripting.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EMSScriptingProcess, this.EMSScriptingRunAll, this.EMSScriptingGenerate, this.EMSScriptingClear });
             this.EditorMenuStripScripting.Name = "EditorMenuStripScripting";
             this.EditorMenuStripScripting.Size = new System.Drawing.Size(66, 20);
             this.EditorMenuStripScripting.Text = "Scripting";
@@ -342,9 +318,7 @@ namespace Binary
             // 
             // EditorMenuStripWindows
             // 
-            this.EditorMenuStripWindows.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EMSWindowsRun,
-            this.EMSWindowsNew});
+            this.EditorMenuStripWindows.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EMSWindowsRun, this.EMSWindowsNew });
             this.EditorMenuStripWindows.Name = "EditorMenuStripWindows";
             this.EditorMenuStripWindows.Size = new System.Drawing.Size(68, 20);
             this.EditorMenuStripWindows.Text = "Windows";
@@ -370,9 +344,7 @@ namespace Binary
             // 
             // EditorMenuStripHelp
             // 
-            this.EditorMenuStripHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EMSHelpAbout,
-            this.EMSHelpTutorials});
+            this.EditorMenuStripHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EMSHelpAbout, this.EMSHelpTutorials });
             this.EditorMenuStripHelp.Name = "EditorMenuStripHelp";
             this.EditorMenuStripHelp.Size = new System.Drawing.Size(44, 20);
             this.EditorMenuStripHelp.Text = "Help";
@@ -770,9 +742,7 @@ namespace Binary
             // EditorStatusStrip
             // 
             this.EditorStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.EditorStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EditorStatusLabel,
-            this.EditorNodeInfo});
+            this.EditorStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.EditorStatusLabel, this.EditorNodeInfo });
             this.EditorStatusStrip.Location = new System.Drawing.Point(0, 442);
             this.EditorStatusStrip.Name = "EditorStatusStrip";
             this.EditorStatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -858,12 +828,11 @@ namespace Binary
             this.EditorStatusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
 
-		}
+        #endregion
 
-		#endregion
-
-		private System.Windows.Forms.MenuStrip EditorMenuStrip;
+        private System.Windows.Forms.MenuStrip EditorMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem EditorMenuStripMain;
 		private System.Windows.Forms.ToolStripMenuItem EMSMainNewLauncher;
 		private System.Windows.Forms.ToolStripMenuItem EMSMainLoadFiles;

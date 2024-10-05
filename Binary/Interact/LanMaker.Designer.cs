@@ -74,7 +74,8 @@
             "Prostreet",
             "Undercover",
             "Underground1",
-            "Underground2"});
+            "Underground2",
+            "World"});
 			this.LanMakerGame.Location = new System.Drawing.Point(57, 77);
 			this.LanMakerGame.Name = "LanMakerGame";
 			this.LanMakerGame.Size = new System.Drawing.Size(305, 23);
