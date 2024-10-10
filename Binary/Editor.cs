@@ -1327,7 +1327,17 @@ namespace Binary
                 // Export the node data
                 string filePath = Path.Combine(currentFolder, $"{cname}.BIN");
                 using var bw = new BinaryWriter(File.Open(filePath, FileMode.Create));
-                manager.Export(cname, bw, serialized);
+
+                try
+                {
+                    manager.Export(cname, bw, serialized);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    // export sub element?
+                    throw;
+                }
             }
         }
         
