@@ -163,52 +163,36 @@ namespace Binary
         {
             try
             {
-
                 if (this.Profile.Count > 0)
                 {
-
                     foreach (var sdb in this.Profile)
                     {
-
                         string from = sdb.FullPath;
                         string to = $"{sdb.FullPath}.bacc";
 
                         if (forced || (!forced && !File.Exists(to)))
                         {
-
                             File.Copy(from, to, true);
-
                         }
-
                     }
 
                     if (forced)
                     {
-
                         _ = MessageBox.Show("All files have been successfully backed up.", "Success",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                     }
-
                 }
                 else
                 {
-
                     throw new Exception("No files are open and directory is not chosen");
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 if (forced)
                 {
-
                     _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                 }
-
             }
         }
 
@@ -228,31 +212,27 @@ namespace Binary
         {
             this.EditorButtonOpenEditor.Enabled =
                 reflective is FNGroup or
-                STRBlock or
-                TPKBlock or
-                DBModelPart or
-                GCareer or
-                VectorVinyl;
+                    STRBlock or
+                    TPKBlock or
+                    DBModelPart or
+                    GCareer or
+                    VectorVinyl;
         }
 
         private void ManageButtonAddNode(TreeNode node)
         {
             if (node == null || node.Level != 1)
             {
-
                 this.EditorButtonAddNode.Enabled = false;
                 return;
-
             }
 
             var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Text);
 
             if (sdb == null)
             {
-
                 this.EditorButtonAddNode.Enabled = false;
                 return;
-
             }
 
             var manager = sdb.Database.GetManager(node.Text);
@@ -263,20 +243,16 @@ namespace Binary
         {
             if (node == null || node.Level != 2)
             {
-
                 this.EditorButtonRemoveNode.Enabled = false;
                 return;
-
             }
 
             var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Parent.Text);
 
             if (sdb == null)
             {
-
                 this.EditorButtonRemoveNode.Enabled = false;
                 return;
-
             }
 
             var manager = sdb.Database.GetManager(node.Parent.Text);
@@ -287,20 +263,16 @@ namespace Binary
         {
             if (node == null || node.Level != 2)
             {
-
                 this.EditorButtonCopyNode.Enabled = false;
                 return;
-
             }
 
             var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Parent.Text);
 
             if (sdb == null)
             {
-
                 this.EditorButtonCopyNode.Enabled = false;
                 return;
-
             }
 
             var manager = sdb.Database.GetManager(node.Parent.Text);
@@ -311,20 +283,16 @@ namespace Binary
         {
             if (node == null || node.Level < 1)
             {
-
                 this.EditorButtonExportNode.Enabled = false;
                 return;
-
             }
 
             var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Parent?.Text || _.Filename == node.Parent?.Text);
 
             if (sdb == null)
             {
-
                 this.EditorButtonExportNode.Enabled = false;
                 return;
-
             }
 
             // Check for a valid manager, whether the node is a parent or a single node
@@ -341,20 +309,16 @@ namespace Binary
         {
             if (node == null || node.Level != 1)
             {
-
                 this.EditorButtonImportNode.Enabled = false;
                 return;
-
             }
 
             var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Text);
 
             if (sdb == null)
             {
-
                 this.EditorButtonImportNode.Enabled = false;
                 return;
-
             }
 
             var manager = sdb.Database.GetManager(node.Text);
@@ -365,20 +329,16 @@ namespace Binary
         {
             if (node == null || node.Level != 2)
             {
-
                 this.EditorButtonScriptNode.Enabled = false;
                 return;
-
             }
 
             var sdb = this.Profile.Find(_ => _.Filename == node.Parent.Parent.Text);
 
             if (sdb == null)
             {
-
                 this.EditorButtonScriptNode.Enabled = false;
                 return;
-
             }
 
             var manager = sdb.Database.GetManager(node.Parent.Text);
@@ -400,19 +360,14 @@ namespace Binary
 
             if (form.WasCreated)
             {
-
                 var result = MessageBox.Show("New launcher was created. Would you like to load it?", "Prompt",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
-
                     this.LoadProfile(form.NewLanPath, true);
-
                 }
-
             }
-
         }
 
         static string m_loadFilesLastDir = null;
@@ -421,9 +376,9 @@ namespace Binary
         {
             if (this._edited)
             {
-
                 var result = MessageBox.Show("You have unsaved changes. Are you sure you want to load " +
-                    "another database?", "Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                                             "another database?", "Prompt", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
 
                 if (result == DialogResult.No)
                 {
@@ -450,7 +405,6 @@ namespace Binary
             {
                 m_loadFilesLastDir = Path.GetDirectoryName(browser.FileName);
                 this.LoadProfile(browser.FileName, true);
-
             }
         }
 
@@ -460,12 +414,11 @@ namespace Binary
 
             if (File.Exists(file))
             {
-
                 if (this._edited)
                 {
-
                     var result = MessageBox.Show("You have unsaved changes. Are you sure you reload " +
-                        "database?", "Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                                                 "database?", "Prompt", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
 
                     if (result == DialogResult.No)
                     {
@@ -474,14 +427,11 @@ namespace Binary
                 }
 
                 this.LoadProfile(file, true);
-
             }
             else
             {
-
                 _ = MessageBox.Show($"Launch file {file} does not exist or was moved.", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
             }
         }
 
@@ -516,45 +466,36 @@ namespace Binary
 
             try
             {
-
                 commands = parser.Read();
-
             }
             catch (Exception ex)
             {
-
                 string error = $"Error has occured -> File: {parser.CurrentFile}, Line: {parser.CurrentIndex}" +
-                    Environment.NewLine + $"Command: [{parser.CurrentLine}]" + Environment.NewLine +
-                    $"Error: {ex.GetLowestMessage()}";
+                               Environment.NewLine + $"Command: [{parser.CurrentLine}]" + Environment.NewLine +
+                               $"Error: {ex.GetLowestMessage()}";
 
                 _ = MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
 
             var manager = new EndScriptManager(this.Profile, commands, dialog.FileName);
 
             try
             {
-
                 manager.CommandChase();
 
                 while (!manager.ProcessScript())
                 {
-
                     var command = manager.CurrentCommand;
 
                     if (command is CheckboxCommand checkbox)
                     {
-
                         using var input = new Check(checkbox.Description, true);
                         _ = input.ShowDialog();
                         checkbox.Choice = input.Value ? 1 : 0;
-
                     }
                     else if (command is ComboboxCommand combobox)
                     {
-
                         string[] options = new string[combobox.Options.Length];
                         for (int i = 0; i < options.Length; ++i)
                         {
@@ -564,28 +505,23 @@ namespace Binary
                         using var input = new Combo(options, combobox.Description, true);
                         _ = input.ShowDialog();
                         combobox.Choice = input.Value < 0 ? 0 : input.Value;
-
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
 
             string script = Path.GetFileName(dialog.FileName);
 
             if (manager.Errors.Any())
             {
-
                 Utils.WriteErrorsToLog(manager.Errors, dialog.FileName);
 
-                using var prompt = new Check($"Script {script} has been applied, however, {manager.Errors.Count()} errors " +
+                using var prompt = new Check(
+                    $"Script {script} has been applied, however, {manager.Errors.Count()} errors " +
                     $"have been detected. Check EndError.log for more information. Do not forget to save changes!",
                     "Open log", true, true);
 
@@ -593,20 +529,15 @@ namespace Binary
 
                 if (prompt.Value)
                 {
-                    var psi = new ProcessStartInfo("EndError.log")
-                    {
-                        UseShellExecute = true
-                    };
+                    var psi = new ProcessStartInfo("EndError.log") { UseShellExecute = true };
 
                     _ = Process.Start(psi);
                 }
             }
             else
             {
-
                 _ = MessageBox.Show($"Script {script} has been successfully applied. Do not forget to save changes!",
                     "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
 
             this.LoadTreeView(this.EditorTreeView.SelectedNode?.FullPath);
@@ -641,49 +572,41 @@ namespace Binary
         {
             try
             {
-
                 if (this.Profile.Count > 0)
                 {
-
                     int count = 0;
 
                     foreach (var sdb in this.Profile)
                     {
-
                         string from = $"{sdb.FullPath}.bacc";
                         string to = sdb.FullPath;
-                        if (File.Exists(from)) { File.Copy(from, to, true); ++count; }
-
+                        if (File.Exists(from))
+                        {
+                            File.Copy(from, to, true);
+                            ++count;
+                        }
                     }
 
                     if (count == 0)
                     {
-
                         _ = MessageBox.Show("No backup files were found.", "Warning",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
-
                     }
 
                     this.LoadProfile(Configurations.Default.LaunchFile, true);
 
                     _ = MessageBox.Show("All backups have been successfully restored.", "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 }
                 else
                 {
-
                     throw new Exception("No files are open and directory is not chosen");
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             }
         }
 
@@ -696,7 +619,6 @@ namespace Binary
 
             if (this.Profile?.Count > 0)
             {
-
                 string path = this.Profile[0].Folder;
 
                 MemoryUnlock.FastUnlock(path + @"\GLOBAL\CARHEADERSMEMORYFILE.BIN");
@@ -706,13 +628,10 @@ namespace Binary
                 MemoryUnlock.LongUnlock(path + @"\GLOBAL\GLOBALMEMORYFILE.BIN");
 
                 MessageBox.Show("Memory files were successfully unlocked for modding.", "Success");
-
             }
             else
             {
-
                 throw new Exception("No files are open and directory is not chosen");
-
             }
 
 #if !DEBUG
@@ -737,10 +656,8 @@ namespace Binary
         {
             if (this.Profile is null)
             {
-
                 MessageBox.Show("No profile was loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-
             }
 
             int index = this.EditorCommandPrompt.GetLineFromCharIndex(this.EditorCommandPrompt.SelectionStart);
@@ -778,29 +695,21 @@ namespace Binary
             // Analize and check if refreshing is required
             if (result == eCommandType.update_collection)
             {
-
                 // Two options: we are updating current CollectionName or not
                 if (line.Contains("CollectionName"))
                 {
-
                     this.EditorPropertyGrid.SelectedObject = null;
                     this.LoadTreeView(this.EditorTreeView.SelectedNode?.FullPath);
-
                 }
                 else
                 {
-
                     this.EditorPropertyGrid.Refresh();
-
                 }
-
             }
             else
             {
-
                 this.EditorPropertyGrid.SelectedObject = null;
                 this.LoadTreeView(this.EditorTreeView.SelectedNode?.FullPath);
-
             }
         }
 
@@ -808,10 +717,8 @@ namespace Binary
         {
             if (this.Profile is null)
             {
-
                 _ = MessageBox.Show("No profile was loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-
             }
 
             if (this.EditorCommandPrompt.Lines.Length == 0)
@@ -826,25 +733,19 @@ namespace Binary
 
             try
             {
-
                 foreach (string line in this.EditorCommandPrompt.Lines)
                 {
-
                     command = line;
                     _ = EndScriptParser.ExecuteSingleCommand(line, this.Profile);
                     ++count;
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 string error = $"Error has occured -> Line: {count}" + Environment.NewLine +
-                    $"Command: [{command}]" + Environment.NewLine + $"Error: {ex.GetLowestMessage()}";
+                               $"Command: [{command}]" + Environment.NewLine + $"Error: {ex.GetLowestMessage()}";
 
                 _ = MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             }
 
             this.LoadTreeView(this.EditorTreeView.SelectedNode?.FullPath);
@@ -855,7 +756,6 @@ namespace Binary
             if (this.EditorPropertyGrid.SelectedObject != null &&
                 this.EditorPropertyGrid.SelectedGridItem.GridItemType == GridItemType.Property)
             {
-
                 string path = this.EditorTreeView.SelectedNode.FullPath;
                 string property = this.EditorPropertyGrid.SelectedGridItem.Label;
                 object value = this.EditorPropertyGrid.SelectedGridItem.Value;
@@ -873,21 +773,19 @@ namespace Binary
 
                 string str = this.GenerateEndCommand(eCommandType.update_collection, path, property, value.ToString());
                 this.WriteLineToEndCommandPrompt(str);
-
             }
         }
 
-        private void EMSScriptingClear_Click(object sender, EventArgs e) => this.EditorCommandPrompt.Text = String.Empty;
+        private void EMSScriptingClear_Click(object sender, EventArgs e) =>
+            this.EditorCommandPrompt.Text = String.Empty;
 
         private void EMSWindowsRun_Click(object sender, EventArgs e)
         {
             try
             {
-
                 // Considering at least ONE file is currently open
                 if (this.Profile.Count > 0)
                 {
-
                     string path = this.Profile[0].Folder;
                     var game = this.Profile[0].Database.GameINT;
                     string exe = path;
@@ -904,21 +802,15 @@ namespace Binary
                     };
 
                     _ = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = path });
-
                 }
                 else
                 {
-
                     throw new Exception("No files are open and directory is not chosen");
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             }
         }
 
@@ -928,9 +820,12 @@ namespace Binary
             _ = Process.Start(new ProcessStartInfo() { FileName = path });
         }
 
-        private void EMSHelpAbout_Click(object sender, EventArgs e) => MessageBox.Show("Binary by MaxHwoy v" + this.ProductVersion, "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void EMSHelpAbout_Click(object sender, EventArgs e) => MessageBox.Show(
+            "Binary by MaxHwoy v" + this.ProductVersion, "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-        private void EMSHelpTutorials_Click(object sender, EventArgs e) => MessageBox.Show("Join Discord server at the start page to get help and full tool documentation!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        private void EMSHelpTutorials_Click(object sender, EventArgs e) => MessageBox.Show(
+            "Join Discord server at the start page to get help and full tool documentation!", "Info",
+            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
         private void EMSOptionsSpeedReflect_Click(object sender, EventArgs e)
         {
@@ -946,10 +841,8 @@ namespace Binary
 
                 if (!File.Exists(speedfrom))
                 {
-
                     MessageBox.Show("SpeedReflect.asi was not found in the Binary directory.", "Error");
                     return;
-
                 }
 
                 string path = this.Profile[0].Folder;
@@ -959,13 +852,10 @@ namespace Binary
                 File.Copy(speedfrom, speedto, true);
 
                 MessageBox.Show("Succesfully installed SpeedReflect.asi.", "Success");
-
             }
             else
             {
-
                 throw new Exception("No files are open and directory is not chosen");
-
             }
 
 #if !DEBUG
@@ -998,13 +888,10 @@ namespace Binary
 
             while (true) // use loop instead of recursion to prevent stack overflow
             {
-
                 if (input.ShowDialog() == DialogResult.OK)
                 {
-
                     try
                     {
-
                         manager.Add(input.Value);
                         string path = this.EditorTreeView.SelectedNode.FullPath;
                         string str = this.GenerateEndCommand(eCommandType.add_collection, path, input.Value);
@@ -1013,23 +900,16 @@ namespace Binary
                         _ = this.EditorTreeView.SelectedNode.Nodes.Add(Utils.GetCollectionNodes(collection));
                         this._edited = true;
                         break;
-
                     }
                     catch (Exception ex)
                     {
-
                         _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                     }
-
                 }
                 else
                 {
-
                     break;
-
                 }
-
             }
         }
 
@@ -1039,7 +919,8 @@ namespace Binary
 
             if (selectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to remove.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to remove.", "Warning", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1103,13 +984,10 @@ namespace Binary
 
             while (true) // use loop instead of recursion to prevent stack overflow
             {
-
                 if (input.ShowDialog() == DialogResult.OK)
                 {
-
                     try
                     {
-
                         manager.Clone(input.Value, cname);
                         string path = this.EditorTreeView.SelectedNode.FullPath;
                         string str = this.GenerateEndCommand(eCommandType.copy_collection, path, input.Value);
@@ -1118,23 +996,16 @@ namespace Binary
                         _ = this.EditorTreeView.SelectedNode.Parent.Nodes.Add(Utils.GetCollectionNodes(collection));
                         this._edited = true;
                         break;
-
                     }
                     catch (Exception ex)
                     {
-
                         _ = MessageBox.Show(ex.GetLowestMessage(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                     }
-
                 }
                 else
                 {
-
                     break;
-
                 }
-
             }
         }
 
@@ -1155,34 +1026,26 @@ namespace Binary
 
             if (collection is DBModelPart model)
             {
-
-                using var editor = new CarPartsEditor(model)
-                {
-                    WindowState = this.WindowState
-                };
+                using var editor = new CarPartsEditor(model) { WindowState = this.WindowState };
 
                 this.Hide();
                 _ = editor.ShowDialog();
                 this.EditorPropertyGrid.Refresh();
                 this.Show();
                 this._edited = true;
-
             }
             else if (collection is FNGroup fng)
             {
-                if (MessageBox.Show("Binary cannot edit FNGroups, but can import and delete them. To edit FNGroups, use FEngLib by heyitsleo. Would you like to open the GitHub page?",
-                    "Binary", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                if (MessageBox.Show(
+                        "Binary cannot edit FNGroups, but can import and delete them. To edit FNGroups, use FEngLib by heyitsleo. Would you like to open the GitHub page?",
+                        "Binary", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                 {
                     Utils.OpenBrowser("https://github.com/NFSTools/FEngLib");
                 }
             }
             else if (collection is TPKBlock tpk)
             {
-
-                using var editor = new TextureEditor(tpk, path)
-                {
-                    WindowState = this.WindowState
-                };
+                using var editor = new TextureEditor(tpk, path) { WindowState = this.WindowState };
 
                 this.Hide();
                 _ = editor.ShowDialog();
@@ -1190,15 +1053,10 @@ namespace Binary
                 this.Show();
                 this.WriteLineToEndCommandPrompt(editor.Commands);
                 this._edited = true;
-
             }
             else if (collection is STRBlock str)
             {
-
-                using var editor = new StringEditor(str, path)
-                {
-                    WindowState = this.WindowState
-                };
+                using var editor = new StringEditor(str, path) { WindowState = this.WindowState };
 
                 this.Hide();
                 _ = editor.ShowDialog();
@@ -1206,15 +1064,10 @@ namespace Binary
                 this.Show();
                 this.WriteLineToEndCommandPrompt(editor.Commands);
                 this._edited = true;
-
             }
             else if (collection is GCareer gcr)
             {
-
-                using var editor = new CareerEditor(gcr, path)
-                {
-                    WindowState = this.WindowState
-                };
+                using var editor = new CareerEditor(gcr, path) { WindowState = this.WindowState };
 
                 this.Hide();
                 _ = editor.ShowDialog();
@@ -1222,31 +1075,28 @@ namespace Binary
                 this.Show();
                 this.WriteLineToEndCommandPrompt(editor.Commands);
                 this._edited = true;
-
             }
             else if (collection is VectorVinyl vinyl)
             {
-
-                using var editor = new VectorEditor(vinyl)
-                {
-                    WindowState = this.WindowState
-                };
+                using var editor = new VectorEditor(vinyl) { WindowState = this.WindowState };
 
                 this.Hide();
                 _ = editor.ShowDialog();
                 this.EditorPropertyGrid.Refresh();
                 this.Show();
                 this._edited = true;
-
             }
         }
 
-        static string m_exportNodeLastDir = null;
+        private static string m_importNodeLastDir = null;
+        private static string m_exportNodeLastDir = null;
+
         private void EditorButtonExportNode_Click(object sender, EventArgs e)
         {
             if (this.EditorTreeView.SelectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to export.", "Warning", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1270,8 +1120,9 @@ namespace Binary
 
         private void ExportParentWithChildren(TreeNode selectedNode, bool serialized)
         {
+            string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
             string cname = selectedNode.Text;
-    
+
             using var dialog = new SaveFileDialog()
             {
                 AddExtension = true,
@@ -1287,60 +1138,14 @@ namespace Binary
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                string folderPath = Path.Combine(Path.GetDirectoryName(dialog.FileName), cname);
-                Directory.CreateDirectory(folderPath);
-
-                ExportNodeRecursive(selectedNode, folderPath, serialized);
-            }
-        }
-
-        private void ExportNodeRecursive(TreeNode node, string currentFolder, bool serialized)
-        {
-            // Dynamically check if the node is a Database type
-            if (IsDatabaseNode(node))
-            {
-                // Create a folder for the Database node
-                string folderPath = Path.Combine(currentFolder, node.Text);
-                Directory.CreateDirectory(folderPath);
-
-                // Recursively export the children
-                foreach (TreeNode childNode in node.Nodes)
-                {
-                    ExportNodeRecursive(childNode, folderPath, serialized);
-                }
-            }
-            else
-            {
-                // Export current node
-                string fname = node.Parent?.Text;
-                string cname = node.Text;
-
-                var sdb = this.Profile.Find(_ => _.Filename == fname);
-                var manager = sdb?.Database?.GetManager(cname);
-
-                if (manager == null)
-                {
-                    MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // Export the node data
-                string filePath = Path.Combine(currentFolder, $"{cname}.BIN");
-                using var bw = new BinaryWriter(File.Open(filePath, FileMode.Create));
-
-                try
-                {
-                    manager.Export(cname, bw, serialized);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    // export sub element?
-                    throw;
-                }
-            }
-        }
+                string exportFilePath = dialog.FileName;
+                string saveDirectory = Path.GetDirectoryName(exportFilePath);
         
+                // Use the refactored ExportSingleNode method
+                ExportSingleNode(selectedNode, saveDirectory, serialized);
+            }
+        }
+
         private void ExportMultipleNodes(List<TreeNode> selectedNodes, bool serialized)
         {
             using var folderDialog = new FolderBrowserDialog()
@@ -1354,41 +1159,61 @@ namespace Binary
 
                 foreach (TreeNode selectedNode in selectedNodes)
                 {
-                    string nodeFolder = Path.Combine(saveDirectory, selectedNode.Text);
-                    Directory.CreateDirectory(nodeFolder);
-
-                    ExportNodeRecursive(selectedNode, nodeFolder, serialized);
+                    ExportSingleNode(selectedNode, saveDirectory, serialized);
                 }
 
                 MessageBox.Show("Selected nodes exported successfully.", "Info", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
         }
-        
-        private bool IsDatabaseNode(TreeNode node)
+
+        private void ExportSingleNode(TreeNode selectedNode, string saveDirectory, bool serialized)
         {
-            // Check if the node corresponds to a Database type
-            var sdb = this.Profile.Find(_ => _.Filename == node.Text);
-            if (sdb != null && sdb.Database != null)
+            string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
+            string cname = selectedNode.Text;
+
+            var sdb = this.Profile.Find(_ => _.Filename == fname);
+            var manager = selectedNode.Level == 0
+                ? sdb.Database.GetManager(cname)
+                : sdb.Database.GetManager(selectedNode.Parent.Text);
+
+            if (manager == null)
             {
-                // Return true if the node represents a Database
-                return true;
+                MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
             }
 
-            // Otherwise, return false
-            return false;
+            try
+            {
+                string filePath = Path.Combine(saveDirectory, $"{cname}.BIN");
+                using var bw = new BinaryWriter(File.Open(filePath, FileMode.Create));
+
+                // Export the node
+                manager.Export(cname, bw, serialized);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private bool IsDatabaseNode(TreeNode node)
+        {
+            var sdb = this.Profile.Find(_ => _.Filename == node.Text);
+            return sdb != null && sdb.Database != null;
         }
 
 
-        static string m_importNodeLastDir = null;
-        
         private void EditorButtonImportNode_Click(object sender, EventArgs e)
         {
             var selectedNodes = this.EditorTreeView.SelectedNodes;
 
             if (selectedNodes.Count == 0)
             {
-                MessageBox.Show("Please select one or more nodes to import.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select one or more nodes to import.", "Warning", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1423,14 +1248,12 @@ namespace Binary
 
                     if (manager == null)
                     {
-                        MessageBox.Show($"Manager not found for node: {mname}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Manager not found for node: {mname}", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
                         continue;
                     }
 
-                    using var importer = new Importer()
-                    {
-                        StartPosition = FormStartPosition.CenterScreen
-                    };
+                    using var importer = new Importer() { StartPosition = FormStartPosition.CenterScreen };
 
                     if (importer.ShowDialog() == DialogResult.OK)
                     {
@@ -1440,7 +1263,7 @@ namespace Binary
                             {
                                 var type = (Nikki.Reflection.Enum.SerializeType)importer.SerializationIndex;
                                 using var br = new BinaryReader(File.Open(fileName, FileMode.Open));
-                                
+
                                 // Import the file
                                 manager.Import(type, br);
                                 this._edited = true;
@@ -1448,7 +1271,8 @@ namespace Binary
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"Failed to import node '{mname}'. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show($"Failed to import node '{mname}'. Error: {ex.Message}", "Error",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
@@ -1480,7 +1304,6 @@ namespace Binary
 
             foreach (string property in properties)
             {
-
                 if (property.Equals("CollectionName", StringComparison.InvariantCulture))
                 {
                     continue;
@@ -1493,12 +1316,10 @@ namespace Binary
                 }
 
                 lines.Add(this.GenerateEndCommand(eCommandType.update_collection, path, property, value));
-
             }
 
             foreach (TreeNode node in this.EditorTreeView.SelectedNode.Nodes)
             {
-
                 if (node.Nodes == null)
                 {
                     continue;
@@ -1506,7 +1327,6 @@ namespace Binary
 
                 foreach (TreeNode subnode in node.Nodes)
                 {
-
                     path = subnode.FullPath;
                     string expand = node.Text;
                     string name = subnode.Text;
@@ -1518,7 +1338,6 @@ namespace Binary
 
                     foreach (string property in part.GetAccessibles())
                     {
-
                         string value = part.GetValue(property);
                         if (String.IsNullOrEmpty(value))
                         {
@@ -1526,11 +1345,8 @@ namespace Binary
                         }
 
                         lines.Add(this.GenerateEndCommand(eCommandType.update_collection, path, property, value));
-
                     }
-
                 }
-
             }
 
             this.WriteLineToEndCommandPrompt(lines);
@@ -1540,32 +1356,25 @@ namespace Binary
         {
             foreach (TreeNode node in nodes)
             {
-
                 if (node.FullPath == path)
                 {
-
                     this.EditorTreeView.SelectedNode = node;
                     this.EditorTreeView.SelectedNode.EnsureVisible();
                     return;
-
                 }
                 else
                 {
-
                     this.RecursiveNodeSelection(path, node.Nodes);
-
                 }
-
             }
         }
 
         private void RecursiveTreeHiglights(string match, TreeNodeCollection nodes)
         {
-
             foreach (TreeNode node in nodes)
             {
-
-                node.BackColor = String.IsNullOrEmpty(match) || !node.Text.Contains(match, StringComparison.OrdinalIgnoreCase)
+                node.BackColor = String.IsNullOrEmpty(match) ||
+                                 !node.Text.Contains(match, StringComparison.OrdinalIgnoreCase)
                     ? this.EditorTreeView.BackColor
                     : Configurations.Default.DarkTheme
                         ? Color.FromArgb(160, 20, 30)
@@ -1576,7 +1385,6 @@ namespace Binary
                     this.RecursiveTreeHiglights(match, node.Nodes);
                 }
             }
-
         }
 
         #endregion
@@ -1598,23 +1406,18 @@ namespace Binary
 
             if (launch.UsageID != eUsage.Modder)
             {
-
-                throw new Exception($"Usage type of the endscript is stated to be {launch.Usage}, while should be Modder");
-
+                throw new Exception(
+                    $"Usage type of the endscript is stated to be {launch.Usage}, while should be Modder");
             }
 
             if (launch.GameID == GameINT.None)
             {
-
                 throw new Exception($"Invalid stated game type named {launch.Game}");
-
             }
 
             if (!Directory.Exists(launch.Directory))
             {
-
                 throw new DirectoryNotFoundException($"Directory named {launch.Directory} does not exist");
-
             }
 
             this.EditorPropertyGrid.SelectedObject = null;
@@ -1630,12 +1433,11 @@ namespace Binary
 
             foreach (string exception in exceptions)
             {
-
                 MessageBox.Show(exception, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             }
 
-            this.EditorStatusLabel.Text = Utils.GetStatusString(launch.Files.Count, watch.ElapsedMilliseconds, filename, "Loading");
+            this.EditorStatusLabel.Text =
+                Utils.GetStatusString(launch.Files.Count, watch.ElapsedMilliseconds, filename, "Loading");
             this.LoadTreeView();
             this.ToggleControlsAfterLoad(true);
 
@@ -1696,20 +1498,15 @@ namespace Binary
 
             foreach (var sdb in this.Profile)
             {
-
                 _ = this.EditorTreeView.Nodes.Add(Utils.GetTreeNodesFromSDB(sdb));
-
             }
 
             if (!String.IsNullOrEmpty(selected))
             {
-
                 this.RecursiveNodeSelection(selected, this.EditorTreeView.Nodes);
-
             }
             else
             {
-
                 this.ManageButtonOpenEditor(null);
                 this.ManageButtonAddNode(null);
                 this.ManageButtonRemoveNode(null);
@@ -1717,7 +1514,6 @@ namespace Binary
                 this.ManageButtonExportNode(null);
                 this.ManageButtonImportNode(null);
                 this.ManageButtonScriptNode(null);
-
             }
 
             this.EditorTreeView.EndUpdate();
@@ -1746,13 +1542,12 @@ namespace Binary
 
             foreach (string exception in exceptions)
             {
-
                 MessageBox.Show(exception, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             }
 
             string filename = Configurations.Default.LaunchFile;
-            this.EditorStatusLabel.Text = Utils.GetStatusString(this.Profile.Count, watch.ElapsedMilliseconds, filename, "Saving");
+            this.EditorStatusLabel.Text =
+                Utils.GetStatusString(this.Profile.Count, watch.ElapsedMilliseconds, filename, "Saving");
             this._edited = false;
 
 #if !DEBUG
@@ -1774,28 +1569,24 @@ namespace Binary
         {
             if (this.EditorTreeView.SelectedNode != null)
             {
-
                 this.EditorTreeView.SelectedNode.ForeColor = this.EditorTreeView.ForeColor;
 
                 e.Node.ForeColor = Configurations.Default.DarkTheme
                     ? Color.FromArgb(255, 230, 0)
                     : Color.FromArgb(255, 20, 20);
-
             }
             else
             {
-
                 e.Node.ForeColor = Configurations.Default.DarkTheme
                     ? Color.FromArgb(255, 230, 0)
                     : Color.FromArgb(255, 90, 0);
-
             }
         }
 
         private void EditorTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var selectedNodes = this.EditorTreeView.SelectedNodes; // Assume `SelectedNodes` is a List<TreeNode>
-    
+
             if (selectedNodes.Count == 0)
             {
                 this.EditorButtonRemoveNode.Enabled = false;
@@ -1805,7 +1596,7 @@ namespace Binary
             // Iterate over selected nodes
             foreach (TreeNode node in selectedNodes)
             {
-                if (node.TreeView != null)  // Ensure node is part of a TreeView
+                if (node.TreeView != null) // Ensure node is part of a TreeView
                 {
                     Console.WriteLine(node.FullPath);
                     var selected = Utils.GetReflective(node.FullPath, this.EditorTreeView.PathSeparator, this.Profile);
@@ -1829,9 +1620,7 @@ namespace Binary
         {
             if (this.EditorButtonOpenEditor.Enabled)
             {
-
                 this.EditorButtonOpenEditor_Click(null, EventArgs.Empty);
-
             }
         }
 
@@ -1844,22 +1633,16 @@ namespace Binary
             if (String.IsNullOrEmpty(this.EditorCommandPrompt.Text) ||
                 this.EditorCommandPrompt.Text.EndsWith(Environment.NewLine))
             {
-
                 this.EditorCommandPrompt.Text += line;
-
             }
             else
             {
-
                 this.EditorCommandPrompt.Text += Environment.NewLine + line;
-
             }
 
             if (!this.EditorCommandPrompt.Text.EndsWith(Environment.NewLine))
             {
-
                 this.EditorCommandPrompt.Text += Environment.NewLine;
-
             }
 
             this.EditorCommandPrompt.SelectionStart = this.EditorCommandPrompt.Text.Length - 1;
@@ -1878,14 +1661,12 @@ namespace Binary
 
             foreach (string line in lines)
             {
-
                 if (String.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
 
                 _ = sb.Append(line + Environment.NewLine);
-
             }
 
             this.WriteLineToEndCommandPrompt(sb.ToString());
@@ -1903,10 +1684,8 @@ namespace Binary
 
             for (int loop = 0; loop < splits.Length - 1; ++loop)
             {
-
                 string split = splits[loop];
                 line += split.Contains(' ') ? $"\"{split}\"" + space : split + space;
-
             }
 
             line += splits[^1].Contains(' ') ? $"\"{splits[^1]}\"" : splits[^1];
@@ -1920,10 +1699,8 @@ namespace Binary
 
             for (int loop = 0; loop < splits.Length - 1; ++loop)
             {
-
                 string split = splits[loop];
                 line += split.Contains(' ') ? $"\"{split}\"" + space : split + space;
-
             }
 
             line += splits[^1].Contains(' ') ? $"\"{splits[^1]}\"" : splits[^1];
@@ -1937,17 +1714,13 @@ namespace Binary
 
             foreach (string split in splits)
             {
-
                 line += split.Contains(' ') ? $"\"{split}\"" + space : split + space;
-
             }
 
             for (int loop = 0; loop < args.Length - 1; ++loop)
             {
-
                 string arg = args[loop];
                 line += arg.Contains(' ') ? $"\"{arg}\"" + space : arg + space;
-
             }
 
             line += args[^1].Contains(' ') ? $"\"{args[^1]}\"" : args[^1];
@@ -1962,7 +1735,8 @@ namespace Binary
                 value = empty;
             }
 
-            string str = this.GenerateEndCommand(eCommandType.update_collection, this.EditorTreeView.SelectedNode.FullPath,
+            string str = this.GenerateEndCommand(eCommandType.update_collection,
+                this.EditorTreeView.SelectedNode.FullPath,
                 e.ChangedItem.Label, value);
 
             this.WriteLineToEndCommandPrompt(str);
@@ -1970,14 +1744,13 @@ namespace Binary
 
             if (e.ChangedItem.Label == "CollectionName")
             {
-
                 this.EditorTreeView.SelectedNode.Text = e.ChangedItem.Value.ToString();
                 this.EditorPropertyGrid.Refresh();
-
             }
         }
 
-        private void EditorFindTextBox_TextChanged(object sender, EventArgs e) => this.RecursiveTreeHiglights(this.EditorFindTextBox.Text, this.EditorTreeView.Nodes);
+        private void EditorFindTextBox_TextChanged(object sender, EventArgs e) =>
+            this.RecursiveTreeHiglights(this.EditorFindTextBox.Text, this.EditorTreeView.Nodes);
 
         #endregion
 
@@ -2000,22 +1773,22 @@ namespace Binary
         {
             if (this._edited)
             {
-
                 var result = MessageBox.Show("You have unsaved changes. Are you sure you want to quit the editor?",
                     "Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                if (result == DialogResult.No) { e.Cancel = true; return; }
-
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
             }
 
             this.Profile = null;
 
             foreach (var form in this._openforms)
             {
-
                 try { form.Close(); }
                 catch { }
-
             }
         }
 
