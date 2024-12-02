@@ -5,13 +5,13 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>binary.ico</ApplicationIcon>
-    <Version>2.9.0</Version>
+    <Version>2.9.1</Version>
     <Authors>MaxHwoy</Authors>
     <PublisherName>MaxHwoy</PublisherName>
     <Description>Tool for editing Need for Speed binary files (.BIN, .BUN, .LZC).</Description>
     <Copyright>Copyright © 2021 MaxHwoy</Copyright>
-    <AssemblyVersion>2.9.0.0</AssemblyVersion>
-    <FileVersion>2.9.0.0</FileVersion>
+    <AssemblyVersion>2.9.1.0</AssemblyVersion>
+    <FileVersion>2.9.1.0</FileVersion>
     <Platforms>AnyCPU;x64</Platforms>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
