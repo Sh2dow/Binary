@@ -29,3 +29,8 @@ Binary is a tool for editing Black Box Need for Speed games binary files, powere
 ﻿![](https://cdn.discordapp.com/attachments/696160463192326154/796941629847633930/image1.PNG)
 ﻿![](https://cdn.discordapp.com/attachments/696160463192326154/796941634125430834/image2.PNG)
 ﻿![](https://cdn.discordapp.com/attachments/696160463192326154/796941639150469140/image3.PNG)
+
+
+
+# Build
+[![MSBuild](https://github.com/Sh2dow/Binary/actions/workflows/dotnetcore.yml/badge.svg)](https://github.com/Sh2dow/Binary/actions/workflows/msbuild.yml)
