@@ -12,8 +12,11 @@ namespace Binary.Interact
 {
     public partial class StringCreator : Form
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Key { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Label { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Value { get; private set; }
 
         public StringCreator()

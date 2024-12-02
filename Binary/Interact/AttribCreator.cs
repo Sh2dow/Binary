@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Nikki.Core;
 using Nikki.Reflection.Enum.CP;
+using System.ComponentModel;
 
 
 
@@ -19,7 +20,8 @@ namespace Binary.Interact
 		private const string String = "String";
 		private const string TwoString = "TwoString";
 
-		public uint KeyChosen { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public uint KeyChosen { get; private set; }
 
 		public AttribCreator(GameINT game)
 		{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 
 
@@ -7,7 +8,8 @@ namespace Binary.Interact
 {
 	public partial class Importer : Form
 	{
-		public int SerializationIndex { get; private set; } = 0;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int SerializationIndex { get; private set; } = 0;
 
 		public Importer()
 		{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 
 
@@ -11,6 +12,7 @@ namespace Binary.Prompt
         private const string input = "Input value";
         private readonly Predicate<string> _input_check;
         private readonly string _error_message;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Value { get; private set; } = String.Empty;
 
         public Input() : this(input, null, invalid, null) { }

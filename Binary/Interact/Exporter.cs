@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 
 
@@ -7,6 +8,7 @@ namespace Binary.Interact
 {
     public partial class Exporter : Form
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool Serialized { get; private set; } = true;
 
         public Exporter() : this(true) { }

@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 
 
@@ -7,6 +8,7 @@ namespace Binary.Prompt
 {
     public partial class Check : Form
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool Value { get; private set; } = false;
 
         public Check()

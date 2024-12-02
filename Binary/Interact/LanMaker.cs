@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using Endscript.Core;
+using System.ComponentModel;
 
 
 
@@ -10,8 +11,10 @@ namespace Binary.Interact
 	public partial class LanMaker : Form
 	{
 		private bool IsValidDirectoryChosen => Directory.Exists(this.LanMakerTextBoxDir.Text);
-		public bool WasCreated { get; private set; }
-		public string NewLanPath { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool WasCreated { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string NewLanPath { get; private set; }
 
 		public LanMaker()
 		{

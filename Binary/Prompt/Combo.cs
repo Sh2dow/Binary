@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 
 
@@ -7,6 +8,7 @@ namespace Binary.Prompt
 {
     public partial class Combo : Form
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Value { get; private set; } = 0;
 
         public Combo()
