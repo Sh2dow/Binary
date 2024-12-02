@@ -1,32 +1,36 @@
-name: Build and Release Application
+name: MSBuild
 
 on:
   workflow_dispatch:
   push:
-    #    branches:
-    #      - master
-    tags:
-      - 'v*' # Trigger only on tags like v1.0.0, v2.0.1, etc.
+    tags: [ 'v*.*.*' ] # Trigger only on semantic version tags
 
 jobs:
   build-and-release:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      # Checkout code and submodules
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
+      # Initialize submodules
       - name: Initialize Submodules
         run: git submodule update --init --recursive
 
+      # Debug directory structure
       - name: Debug Directory Structure
-        run: tree /f /a
+        shell: pwsh
+        run: Get-ChildItem -Path . -Recurse
 
+      # Set up .NET Core
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.0.x'
 
+      # Build solution and submodules
       - name: Build Submodules
         run: |
           dotnet build Modules\ILWrapper\ILWrapper\ILWrapper.csproj -c Release --framework net7.0
@@ -34,15 +38,27 @@ jobs:
           dotnet build Modules\Nikki\Nikki\Nikki.csproj -c Release --framework net7.0
           dotnet build Modules\Endscript\Endscript\Endscript.csproj -c Release --framework net7.0
 
+      # Publish Binary project
       - name: Publish Binary
         run: dotnet publish Binary\Binary.csproj -c Release --framework net7.0-windows
 
+      # Create ZIP Archive dynamically from tag
       - name: Create ZIP Archive
+        shell: pwsh
         run: |
-          mkdir artifact
-          tag_version=${{ github.ref_name }}
-          powershell Compress-Archive -Path Binary/bin/Release/net7.0-windows/* -DestinationPath artifact/${tag_version}.zip
+          mkdir -p artifact
+          # Extract the tag version and remove the 'v' prefix
+          $tag_version = "${{ github.ref_name }}"
+          $tag_version_without_v = $tag_version -replace '^v', ''
+          # Create the ZIP archive
+          Compress-Archive -Path Binary/bin/Release/net7.0-windows/* -DestinationPath "artifact/$tag_version_without_v.zip"
 
+      # Debug artifact structure
+      - name: Debug Artifact Directory
+        shell: pwsh
+        run: Get-ChildItem -Path artifact
+      
+      # Create GitHub Release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -53,13 +69,13 @@ jobs:
           release_name: Binary ${{ github.ref_name }} # Release name includes version
           draft: false
           prerelease: false
-
+          
+      # Upload ZIP to Release
       - name: Upload Artifact to Release
-        uses: actions/upload-release-asset@v1
+        shell: pwsh
+        run: |
+          $artifact = Get-ChildItem -Path artifact -Filter *.zip | Select-Object -ExpandProperty FullName
+          Write-Output "Uploading artifact: $artifact"
+          gh release upload "${{ github.ref_name }}" $artifact --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifact/${{ github.ref_name }}.zip # Use versioned asset name
-          asset_name: ${{ github.ref_name }}.zip
-          asset_content_type: application/zip

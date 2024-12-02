@@ -33,4 +33,4 @@ Binary is a tool for editing Black Box Need for Speed games binary files, powere
 
 
 # Build
-[![MSBuild](https://github.com/Sh2dow/Binary/actions/workflows/dotnetcore.yml/badge.svg)](https://github.com/Sh2dow/Binary/actions/workflows/msbuild.yml)
+[![MSBuild](https://github.com/Sh2dow/Binary/actions/workflows/msbuild.yml/badge.svg)](https://github.com/Sh2dow/Binary/actions/workflows/msbuild.yml)
