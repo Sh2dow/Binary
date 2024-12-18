@@ -437,6 +437,8 @@ namespace Binary
 
         private void EMSMainSaveFiles_Click(object sender, EventArgs e) => this.SaveProfile();
 
+        private void EMSMainSaveAsFiles_Click(object sender, EventArgs e) => this.SaveProfile(GameINT.Prostreet);
+
         static string m_importEndscriptLastDir = null;
 
         private void EMSMainImportEndscript_Click(object sender, EventArgs e)
@@ -915,6 +917,9 @@ namespace Binary
 
         private void EditorButtonRemoveNode_Click(object sender, EventArgs e)
         {
+            // This button is enabled only in collections, so it is 
+            // safe to assume that we are in a collection TreeNode
+            
             var selectedNodes = this.EditorTreeView.SelectedNodes; // Assume SelectedNodes is a List<TreeNode>
 
             if (selectedNodes.Count == 0)
@@ -1106,21 +1111,31 @@ namespace Binary
 
             bool serialized = exporter.Serialized; // Get the user's choice
 
-            if (this.EditorTreeView.SelectedNodes.Count == 1)
+            if (this.EditorTreeView.SelectedNodes.Count == 0)
             {
                 // Handle single node export with its children
-                ExportParentWithChildren(this.EditorTreeView.SelectedNode, serialized);
+                this.ExportParentWithChildren(this.EditorTreeView.SelectedNode, serialized);
             }
             else
             {
                 // Handle multiple node export
-                ExportMultipleNodes(this.EditorTreeView.SelectedNodes, serialized);
+                if (this.EditorTreeView.SelectedNode.Level == 1)
+                {
+                    foreach (TreeNode selectedNode in this.EditorTreeView.SelectedNodes)
+                    {
+                        this.ExportParentWithChildren(selectedNode, serialized);
+                    }
+                }
+                else
+                {
+                    this.ExportMultipleNodes(this.EditorTreeView.SelectedNodes, serialized);
+                }
             }
         }
 
         private void ExportParentWithChildren(TreeNode selectedNode, bool serialized)
         {
-            string fname = selectedNode.Parent?.Parent?.Text ?? selectedNode.Parent?.Text ?? selectedNode.Text;
+            string fname = selectedNode.Parent?.Text ?? selectedNode.Text;
             string cname = selectedNode.Text;
 
             using var dialog = new SaveFileDialog()
@@ -1142,7 +1157,36 @@ namespace Binary
                 string saveDirectory = Path.GetDirectoryName(exportFilePath);
         
                 // Use the refactored ExportSingleNode method
-                ExportSingleNode(selectedNode, saveDirectory, serialized);
+                // ExportSingleNode(selectedNode, saveDirectory, serialized);
+                
+                // var sdb = this.Profile.Find(_ => _.Filename == fname);
+                var sdb = this.Profile.Find(_ => _.Filename == selectedNode.Parent.Parent?.Text || _.Filename == selectedNode.Parent?.Text);
+
+                // var manager = selectedNode.Level == 0
+                //     ? sdb.Database.GetManager(cname)
+                //     : sdb.Database.GetManager(fname);
+                var manager = sdb.Database.GetManager(selectedNode.Text);
+
+                if (manager == null)
+                {
+                    MessageBox.Show($"Manager not found for node: {cname}", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                try
+                {
+                    string filePath = Path.Combine(saveDirectory, $"{cname}.BIN");
+                    using var bw = new BinaryWriter(File.Open(filePath, FileMode.Create));
+
+                    // Export the node
+                    manager.Export(cname, bw, serialized);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to export node '{cname}'. Error: {ex.Message}", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -1159,7 +1203,7 @@ namespace Binary
 
                 foreach (TreeNode selectedNode in selectedNodes)
                 {
-                    ExportSingleNode(selectedNode, saveDirectory, serialized);
+                    this.ExportSingleNode(selectedNode, saveDirectory, serialized);
                 }
 
                 MessageBox.Show("Selected nodes exported successfully.", "Info", MessageBoxButtons.OK,
@@ -1198,7 +1242,7 @@ namespace Binary
                     MessageBoxIcon.Error);
             }
         }
-
+        
         private bool IsDatabaseNode(TreeNode node)
         {
             var sdb = this.Profile.Find(_ => _.Filename == node.Text);
@@ -1525,7 +1569,7 @@ namespace Binary
 
         #region Saving
 
-        private void SaveProfile()
+        private void SaveProfile(GameINT? gameInt = null)
         {
 #if !DEBUG
 			try
@@ -1536,7 +1580,7 @@ namespace Binary
             var watch = new Stopwatch();
             watch.Start();
 
-            string[] exceptions = this.Profile.Save();
+            string[] exceptions = this.Profile.Save(gameInt);
 
             watch.Stop();
 
