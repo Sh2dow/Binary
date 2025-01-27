@@ -122,52 +122,46 @@ namespace Binary.UI
 
         private void LoadListView(int index = -1, string searchQuery = null)
         {
-            // Ensure original items are initialized
-            if (_originalItems == null)
-            {
-                _originalItems = new List<ListViewItem>();
-                var list = this.TPK.GetTextures();
+            // Use TPK.Textures directly to reflect sorted data
+            var textures = this.TPK.Textures;
 
-                var count = 0;
-                foreach (var texture in list)
-                {
-                    var item = new ListViewItem { Text = (count++).ToString() };
-
-                    var asString = texture.Compression.ToString();
-                    var compression = asString.Length > 8 ? asString.Substring(8) : asString;
-
-                    item.SubItems.Add($"0x{texture.BinKey:X8}");
-                    item.SubItems.Add(texture.CollectionName);
-                    item.SubItems.Add(compression);
-
-                    if (texture.BinKey != texture.CollectionName.BinHash())
-                    {
-                        item.BackColor = Configurations.Default.DarkTheme
-                            ? Color.FromArgb(70, 0, 20)
-                            : Color.FromArgb(255, 100, 100);
-                    }
-
-                    _originalItems.Add(item);
-                }
-            }
-
-            // Filter items based on the search query
-            IEnumerable<ListViewItem> filteredItems = _originalItems;
-
+            // Apply search query if provided
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                filteredItems = _originalItems.Where(item =>
-                    item.SubItems.Cast<ListViewItem.ListViewSubItem>()
-                        .Any(subItem => subItem.Text.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) >= 0));
+                textures = textures.Where(texture =>
+                    texture.CollectionName.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    $"0x{texture.BinKey:X8}".IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             }
 
-            // Update ListView
+            // Update ListView items
             this.TexEditorListView.BeginUpdate();
             this.TexEditorListView.Items.Clear();
-            this.TexEditorListView.Items.AddRange(filteredItems.ToArray());
+
+            int count = 0;
+            foreach (var texture in textures)
+            {
+                var item = new ListViewItem { Text = (count++).ToString() };
+
+                var compression = texture.Compression.ToString();
+                compression = compression.Length > 8 ? compression.Substring(8) : compression;
+
+                item.SubItems.Add($"0x{texture.BinKey:X8}");
+                item.SubItems.Add(texture.CollectionName);
+                item.SubItems.Add(compression);
+
+                if (texture.BinKey != texture.CollectionName.BinHash())
+                {
+                    item.BackColor = Configurations.Default.DarkTheme
+                        ? Color.FromArgb(70, 0, 20)
+                        : Color.FromArgb(255, 100, 100);
+                }
+
+                this.TexEditorListView.Items.Add(item);
+            }
+
             this.TexEditorListView.EndUpdate();
 
-            // Ensure a specific item is selected if index is valid
+            // Preserve selection if index is valid
             if (index >= 0 && index < this.TexEditorListView.Items.Count)
             {
                 this.TexEditorListView.Items[index].Selected = true;
@@ -223,7 +217,7 @@ namespace Binary.UI
                 Keys.Control | Keys.D, // Remove Texture
                 Keys.Control | Keys.C, // Copy Texture
                 Keys.Control | Keys.R, // Replace Texture
-                Keys.Control | Keys.E  // Export Texture
+                Keys.Control | Keys.E // Export Texture
             };
 
             return boundKeys.Contains(keyData);
@@ -626,53 +620,33 @@ namespace Binary.UI
 
         private void TexEditorListView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            uint key;
-            int index;
-
-            if (this.TexEditorPropertyGrid.SelectedObject is null)
+            if (_last_column_clicked == e.Column)
             {
-                key = 0xFFFFFFFF;
-                index = -1;
+                // Reverse sorting order for the same column
+                this.TPK.Textures.Reverse();
+                _last_column_clicked = -1; // Reset to indicate reverse
             }
             else
             {
-                key = ((Texture)this.TexEditorPropertyGrid.SelectedObject).BinKey;
-                index = 0;
+                _last_column_clicked = e.Column; // Set new column
+
+                // Perform sorting based on clicked column
+                switch (e.Column)
+                {
+                    case 1: // BinKey
+                        this.TPK.SortTexturesByType(false);
+                        break;
+                    case 2: // CollectionName
+                        this.TPK.SortTexturesByType(true);
+                        break;
+                    default:
+                        return; // Ignore unsupported columns
+                }
             }
 
-            switch (e.Column)
-            {
-                case 1: // BinKey
-                    this.TPK.SortTexturesByType(false);
-
-                    if (this._last_column_clicked == 1)
-                    {
-                        this.TPK.Textures.Reverse();
-                        this._last_column_clicked = -1;
-                    }
-                    else this._last_column_clicked = 1;
-
-                    if (index == 0) index = this.TPK.GetTextureIndex(key, KeyType.BINKEY);
-                    this.LoadListView(index);
-                    break;
-
-                case 2: // CollectionName
-                    this.TPK.SortTexturesByType(true);
-
-                    if (this._last_column_clicked == 2)
-                    {
-                        this.TPK.Textures.Reverse();
-                        this._last_column_clicked = -1;
-                    }
-                    else this._last_column_clicked = 2;
-
-                    if (index == 0) index = this.TPK.GetTextureIndex(key, KeyType.BINKEY);
-                    this.LoadListView(index);
-                    break;
-
-                default:
-                    break;
-            }
+            // Reload the ListView with the updated sort order
+            string searchQuery = this.TexEditorSearchBox.Text;
+            this.LoadListView(searchQuery: searchQuery);
         }
 
         #endregion
