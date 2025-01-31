@@ -225,38 +225,51 @@ namespace Binary.UI
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if ((keyData & Keys.Modifiers) != Keys.None || this.IsBoundKeyCombination(keyData))
+            // If a control inside TexEditorPropertyGrid is focused, do not capture keystrokes for search
+            if (this.TexEditorPropertyGrid.Focused || this.TexEditorPropertyGrid.ContainsFocus)
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+            // Define bound key combinations for menu actions
+            var boundKeys = new HashSet<Keys>
+            {
+                Keys.Control | Keys.A, // Add Texture
+                Keys.Control | Keys.D, // Remove Texture
+                Keys.Control | Keys.C, // Copy Texture
+                Keys.Control | Keys.R, // Replace Texture
+                Keys.Control | Keys.E  // Export Texture
+            };
+
+            // If a bound key is pressed, let the base handler process it
+            if (boundKeys.Contains(keyData))
                 return base.ProcessCmdKey(ref msg, keyData);
 
-            if (keyData == Keys.Escape)
+            // Escape key: Clear search box if active
+            if (keyData == Keys.Escape && this.TexEditorSearchBox.Visible)
             {
                 this.TexEditorSearchBox.Text = string.Empty;
                 this.TexEditorSearchBox.Visible = false;
                 this.TexEditorListView.Focus();
-
-                // Scroll to the selected entry if one exists
-                if (this.TexEditorListView.SelectedItems.Count > 0)
-                {
-                    this.TexEditorListView.SelectedItems[0].EnsureVisible();
-                }
-            }
-
-            // Check if key is printable
-            char keyChar = (char)keyData;
-            if (char.IsLetterOrDigit(keyChar) || char.IsWhiteSpace(keyChar))
-            {
-                if (!this.TexEditorSearchBox.Visible)
-                {
-                    this.TexEditorSearchBox.Visible = true;
-                    this.TexEditorSearchBox.Focus();
-                }
-
-                this.TexEditorSearchBox.Text += keyChar;
-                this.TexEditorSearchBox.SelectionStart = this.TexEditorSearchBox.Text.Length;
                 return true;
             }
 
-            return base.ProcessCmdKey(ref msg, keyData);
+            // Ignore non-character keys
+            if ((keyData & Keys.Modifiers) != Keys.None || keyData < Keys.Space || keyData > Keys.Z)
+                return base.ProcessCmdKey(ref msg, keyData);
+
+            // Activate the search box only if it's not already visible
+            if (!this.TexEditorSearchBox.Visible)
+            {
+                this.TexEditorSearchBox.Visible = true;
+                this.TexEditorSearchBox.Focus();
+            }
+
+            // Append the typed character to the search box
+            this.TexEditorSearchBox.Text += (char)keyData;
+            this.TexEditorSearchBox.SelectionStart = this.TexEditorSearchBox.Text.Length;
+    
+            return true;
         }
 
         private void PositionSearchBox()
